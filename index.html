@@ -8,8 +8,10 @@
     :root {
       --primary-color: #4A90E2;
       --secondary-color: #5C6AC4;
-      --success-color: #47C1BF;
-      --danger-color: #DE3618;
+      --success-color: #2E7D32;
+      --success-bg: #E8F5E9;
+      --danger-color: #C62828;
+      --danger-bg: #FFEBEE;
       --bg-color: #F4F6F8;
       --card-bg: #FFFFFF;
       --text-color: #212B36;
@@ -144,38 +146,44 @@
     }
 
     .option-btn.correct {
-      background-color: #E3F8F7;
+      background-color: var(--success-bg);
       border-color: var(--success-color);
-      color: #007ACE;
+      color: var(--success-color);
       font-weight: bold;
     }
 
     .option-btn.wrong {
-      background-color: #FBEAE5;
+      background-color: var(--danger-bg);
       border-color: var(--danger-color);
       color: var(--danger-color);
       font-weight: bold;
     }
 
-    .feedback-box {
-      margin-top: 10px;
-      padding: 12px;
+    .explanation-box {
+      margin-top: 15px;
+      padding: 16px;
       border-radius: var(--border-radius);
-      font-weight: bold;
-      text-align: center;
+      font-size: 0.95rem;
+      line-height: 1.5;
       display: none;
     }
 
-    .feedback-box.correct {
-      background-color: #E3F8F7;
-      color: #007ACE;
-      display: block;
+    .explanation-box.correct-style {
+      background-color: var(--success-bg);
+      border: 1px solid var(--success-color);
+      color: #1B5E20;
     }
 
-    .feedback-box.wrong {
-      background-color: #FBEAE5;
-      color: var(--danger-color);
-      display: block;
+    .explanation-box.wrong-style {
+      background-color: var(--danger-bg);
+      border: 1px solid var(--danger-color);
+      color: #B71C1C;
+    }
+
+    .explanation-title {
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
     }
 
     .action-btn {
@@ -188,7 +196,7 @@
       font-size: 1rem;
       font-weight: bold;
       cursor: pointer;
-      margin-top: auto;
+      margin-top: 20px;
     }
 
     .action-btn:disabled {
@@ -262,7 +270,7 @@
 
     <div id="options-container" class="options-grid"></div>
 
-    <div id="feedback" class="feedback-box"></div>
+    <div id="explanation" class="explanation-box"></div>
 
     <button id="next-btn" class="action-btn" onclick="nextQuestion()" disabled>次へ進む</button>
   </div>
@@ -281,41 +289,161 @@
 <script>
   const questionBank = {
     L7_grammar: [
-      { q: "次の動詞の...ing形として正しいものを選びなさい：[ lie ]", options: ["lying", "lieing", "lyingg", "lies"], answer: 0 },
-      { q: "「私は今、父の車を洗っています。」\nI (  ) washing my father’s car now.", options: ["am", "is", "are", "do"], answer: 0 },
-      { q: "「カオリは今、自分の部屋で勉強しています。」\nKaori (  ) studying in her room now.", options: ["are", "am", "is", "does"], answer: 2 },
-      { q: "カッコ内の語を適当な形にしなさい：\nSam is ( lie ) on the bed.", options: ["lieing", "lying", "lyed", "lies"], answer: 1 },
-      { q: "「私は彼女のお母さんをよく知っています。」\nI (  ) her mother very well.", options: ["know", "am knowing", "knows", "is knowing"], answer: 0 },
-      { q: "「メアリーは今、夕食を食べています。」\nMary (  ) dinner now.", options: ["has", "is having", "have", "is have"], answer: 1 },
-      { q: "英文の誤りを直した正しい文を選びなさい：\n[ I’m eat an apple now. ]", options: ["I’m eating an apple now.", "I eat an apple now.", "I’m eatting an apple now.", "I am eat an apple now."], answer: 0 },
-      { q: "英文の誤りを直した正しい文を選びなさい：\n[ We are wanting two dogs. ]", options: ["We want two dogs.", "We are want two dogs.", "We wanting two dogs.", "We wants two dogs."], answer: 0 }
+      {
+        q: "次の動詞の...ing形として正しいものを選びなさい：[ lie ]",
+        options: ["lying", "lieing", "lyingg", "lies"],
+        answer: 0,
+        explanation: "【解説】語尾が ie で終わる動詞（lie, die など）を ...ing 形にする場合、ie を y に変えて ing をつけます。（lie ➔ lying）"
+      },
+      {
+        q: "「私は今、父の車を洗っています。」\nI (  ) washing my father’s car now.",
+        options: ["am", "is", "are", "do"],
+        answer: 0,
+        explanation: "【解説】「〜しています（現在進行形）」は < be動詞 + 動詞のing形 > で表します。主語が I なので be動詞は am です。"
+      },
+      {
+        q: "「カオリは今、自分の部屋で勉強しています。」\nKaori (  ) studying in her room now.",
+        options: ["are", "am", "is", "does"],
+        answer: 2,
+        explanation: "【解説】主語 Kaori は一人称・単数（She）なので、現在進行形の be動詞は is を使用します。"
+      },
+      {
+        q: "カッコ内の語を適当な形にしなさい：\nSam is ( lie ) on the bed.",
+        options: ["lieing", "lying", "lyed", "lies"],
+        answer: 1,
+        explanation: "【解説】is の後ろで「横になっている」という進行形を作るため、lie を ing 形（lying）にします。"
+      },
+      {
+        q: "「私は彼女のお母さんをよく知っています。」\nI (  ) her mother very well.",
+        options: ["know", "am knowing", "knows", "is knowing"],
+        answer: 0,
+        explanation: "【解説】know（知っている）、want（欲している）、like（好き）などの「状態」を表す動詞は、基本的に現在進行形（be + ing）にはせず、現在形（know）のまま使用します。"
+      },
+      {
+        q: "「メアリーは今、夕食を食べています。」\nMary (  ) dinner now.",
+        options: ["has", "is having", "have", "is have"],
+        answer: 1,
+        explanation: "【解説】have には「持っている（状態）」と「食べる（動作）」の意味があります。「食べる」の意味で使う場合は進行形にできるため、Mary is having dinner. となります。"
+      },
+      {
+        q: "英文の誤りを直した正しい文を選びなさい：\n[ I’m eat an apple now. ]",
+        options: ["I’m eating an apple now.", "I eat an apple now.", "I’m eatting an apple now.", "I am eat an apple now."],
+        answer: 0,
+        explanation: "【解説】現在進行形は < be動詞 + ing形 > です。be動詞（I'm）の後ろの動詞は eating にしなければなりません。また eat の ing 形は t を重ねず eating となります。"
+      },
+      {
+        q: "英文の誤りを直した正しい文を選びなさい：\n[ We are wanting two dogs. ]",
+        options: ["We want two dogs.", "We are want two dogs.", "We wanting two dogs.", "We wants two dogs."],
+        answer: 0,
+        explanation: "【解説】want（〜が欲しい）は状態を表す動詞のため進行形（are wanting）にできません。現在形の We want two dogs. が正解です。"
+      }
     ],
     L7_read: [
-      { q: "空所(ア)に入る適当な語を選びなさい：\nDo you have any ideas ( ア ) the report?", options: ["about", "between", "from", "around"], answer: 0 },
-      { q: "空所(イ)に入る適当な語を選びなさい：\nWhat is the difference ( イ ) hospital clowns and circus clowns?", options: ["for", "between", "from", "around"], answer: 1 },
-      { q: "空所(ウ)に入る適当な語を選びなさい：\nThe children are away ( ウ ) their families, so they are sometimes lonely.", options: ["from", "at", "between", "around"], answer: 0 },
-      { q: "空所(エ)に入る適当な語を選びなさい：\nNow, many hospital clowns visit hospitals ( エ ) the world.", options: ["around", "between", "from", "by"], answer: 0 },
-      { q: "「彼女はテレビを見ているところですか。」を表す正しい英文を選びなさい。", options: ["Is she watching TV?", "Does she watch TV?", "Is she watch TV?", "Are she watching TV?"], answer: 0 }
+      {
+        q: "空所(ア)に入る適当な語を選びなさい：\nDo you have any ideas ( ア ) the report?",
+        options: ["about", "between", "from", "around"],
+        answer: 0,
+        explanation: "【解説】ideas about ... で「〜についてのアイディア・考え」という意味になります。"
+      },
+      {
+        q: "空所(イ)に入る適当な語を選びなさい：\nWhat is the difference ( イ ) hospital clowns and circus clowns?",
+        options: ["for", "between", "from", "around"],
+        answer: 1,
+        explanation: "【解説】difference between A and B で「AとBの違い」という重要表現です。"
+      },
+      {
+        q: "空所(ウ)に入る適当な語を選びなさい：\nThe children are away ( ウ ) their families, so they are sometimes lonely.",
+        options: ["from", "at", "between", "around"],
+        answer: 0,
+        explanation: "【解説】away from ... で「〜から離れて」という意味になります。"
+      },
+      {
+        q: "空所(エ)に入る適当な語を選びなさい：\nNow, many hospital clowns visit hospitals ( エ ) the world.",
+        options: ["around", "between", "from", "by"],
+        answer: 0,
+        explanation: "【解説】around the world で「世界中で / 世界中の」という意味になります。"
+      },
+      {
+        q: "「彼女はテレビを見ているところですか。」を表す正しい英文を選びなさい。",
+        options: ["Is she watching TV?", "Does she watch TV?", "Is she watch TV?", "Are she watching TV?"],
+        answer: 0,
+        explanation: "【解説】現在進行形の疑問文は < Be動詞 + 主語 + 動詞のing形 ...? > の順になります。主語が she なので Is she watching TV? となります。"
+      }
     ],
     L8_grammar: [
-      { q: "次の動詞の過去形として正しいものを選びなさい：[ stop ]", options: ["stoped", "stopped", "stoping", "stops"], answer: 1 },
-      { q: "次の動詞の過去形として正しいものを選びなさい：[ write ]", options: ["writed", "wrote", "written", "writing"], answer: 1 },
-      { q: "「私は昨晩、数学を勉強しました。」\nI (  ) math last night.", options: ["study", "studies", "studied", "was studied"], answer: 2 },
-      { q: "「ボブは２日前に自分の車を洗いました。」\nBob washed his car two days (  ).", options: ["ago", "before", "last", "after"], answer: 0 },
-      { q: "「私は昨夜、スマートフォンを使いませんでした。」\nI (  ) use my smartphone last night.", options: ["don't", "didn't", "wasn't", "not"], answer: 1 },
-      { q: "「誰が居間を掃除しましたか。」—「マイクがしました。」\n(  ) cleaned the living room? — Mike did.", options: ["What", "Who", "Where", "When"], answer: 1 },
-      { q: "「トムは昨日図書館へ行きました。」を否定文にしなさい。", options: ["Tom didn't go to the library yesterday.", "Tom didn't went to the library yesterday.", "Tom doesn't go to the library yesterday.", "Tom wasn't go to the library yesterday."], answer: 0 }
+      {
+        q: "次の動詞の過去形として正しいものを選びなさい：[ stop ]",
+        options: ["stoped", "stopped", "stoping", "stops"],
+        answer: 1,
+        explanation: "【解説】stop は「短母音 + 子音字」で終わる語のため、最後の P を重ねて ed をつけます（stopped）。"
+      },
+      {
+        q: "次の動詞の過去形として正しいものを選びなさい：[ write ]",
+        options: ["writed", "wrote", "written", "writing"],
+        answer: 1,
+        explanation: "【解説】write（書く）は不規則変化動詞です。過去形は wrote となります。"
+      },
+      {
+        q: "「私は昨晩、数学を勉強しました。」\nI (  ) math last night.",
+        options: ["study", "studies", "studied", "was studied"],
+        answer: 2,
+        explanation: "【解説】last night（昨晩）があるため過去形の文です。study は < 子音字 + y > で終わるため、y を i に変えて ed（studied）をつけます。"
+      },
+      {
+        q: "「ボブは２日前に自分の車を洗いました。」\nBob washed his car two days (  ).",
+        options: ["ago", "before", "last", "after"],
+        answer: 0,
+        explanation: "【解説】「（今から）〜前に」を表すときは < 期間 + ago > を使います。two days ago で「2日前」となります。"
+      },
+      {
+        q: "「私は昨夜、スマートフォンを使いませんでした。」\nI (  ) use my smartphone last night.",
+        options: ["don't", "didn't", "wasn't", "not"],
+        answer: 1,
+        explanation: "【解説】一般動詞の過去形の否定文は < didn't + 動詞の原形 > で表します。"
+      },
+      {
+        q: "「誰が居間を掃除しましたか。」—「マイクがしました。」\n(  ) cleaned the living room? — Mike did.",
+        options: ["What", "Who", "Where", "When"],
+        answer: 1,
+        explanation: "【解説】「誰が〜しましたか」と主語をたずねる疑問文は < Who + 過去形動詞 ...? > で表します。答えるときは Mike did. のように did を受けます。"
+      },
+      {
+        q: "「トムは昨日図書館へ行きました。」を否定文にしなさい。",
+        options: ["Tom didn't go to the library yesterday.", "Tom didn't went to the library yesterday.", "Tom doesn't go to the library yesterday.", "Tom wasn't go to the library yesterday."],
+        answer: 0,
+        explanation: "【解説】didn't の後ろは必ず「動詞の原形（go）」に戻ります。went にしないよう注意しましょう。"
+      }
     ],
     L8_read: [
-      { q: "空所(ア)(イ)に入る適当な語を選びなさい：\nDenali National Park is ( ア )( イ ) the 11 national parks in Alaska.", options: ["one of", "some of", "first of", "part of"], answer: 0 },
-      { q: "「彼らはバスに近づいて来ました。」\nThey (  ) close to our bus.", options: ["came", "come", "coming", "comes"], answer: 0 },
-      { q: "「僕は彼らの写真をたくさん撮りました。」\nI (  ) many pictures of them.", options: ["take", "took", "taken", "taking"], answer: 1 },
-      { q: "「家族と僕は３日前にツアーバスでここに来ました。」を表す正しい英文を選びなさい。", options: [
+      {
+        q: "空所(ア)(イ)に入る適当な語を選びなさい：\nDenali National Park is ( ア )( イ ) the 11 national parks in Alaska.",
+        options: ["one of", "some of", "first of", "part of"],
+        answer: 0,
+        explanation: "【解説】one of + 複数名詞 で「〜の中の1つ（1つ）」という意味になります。"
+      },
+      {
+        q: "「彼らはバスに近づいて来ました。」\nThey (  ) close to our bus.",
+        options: ["came", "come", "coming", "comes"],
+        answer: 0,
+        explanation: "【解説】come（来る）の過去形は came です。come close to ... で「〜に近づく」という意味になります。"
+      },
+      {
+        q: "「僕は彼らの写真をたくさん撮りました。」\nI (  ) many pictures of them.",
+        options: ["take", "took", "taken", "taking"],
+        answer: 1,
+        explanation: "【解説】take（写真を撮る）の過去形は took です。take pictures of ... で「〜の写真を撮る」となります。"
+      },
+      {
+        q: "「家族と僕は３日前にツアーバスでここに来ました。」を表す正しい英文を選びなさい。",
+        options: [
           "My family and I came here on the tour bus three days ago.",
           "My family and I come here on the tour bus three days ago.",
           "My family and I came here three days ago on the tour bus.",
           "My family and I was came here on the tour bus three days ago."
-        ], answer: 0 }
+        ],
+        answer: 0,
+        explanation: "【解説】「〜に乗って」は on the tour bus などの前置詞句で表し、「3日前」という時を表す three days ago は文末に置くのが一般的です。"
+      }
     ]
   };
 
@@ -396,8 +524,10 @@
       optionsContainer.appendChild(btn);
     });
 
-    document.getElementById('feedback').className = 'feedback-box';
-    document.getElementById('feedback').style.display = 'none';
+    const expBox = document.getElementById('explanation');
+    expBox.className = 'explanation-box';
+    expBox.style.display = 'none';
+    expBox.innerHTML = '';
     document.getElementById('next-btn').disabled = true;
   }
 
@@ -407,12 +537,12 @@
     
     buttons.forEach(btn => btn.disabled = true);
 
-    const feedback = document.getElementById('feedback');
+    const expBox = document.getElementById('explanation');
 
     if (selectedIdx === q.answer) {
       buttons[selectedIdx].classList.add('correct');
-      feedback.innerText = "正解！";
-      feedback.className = "feedback-box correct";
+      expBox.className = "explanation-box correct-style";
+      expBox.innerHTML = `<div class="explanation-title">⭕ 正解！</div><div>${q.explanation}</div>`;
       score++;
       
       if (currentCategory === 'mistakes') {
@@ -422,8 +552,8 @@
     } else {
       buttons[selectedIdx].classList.add('wrong');
       buttons[q.answer].classList.add('correct');
-      feedback.innerText = `不正解... 正解は: ${q.options[q.answer]}`;
-      feedback.className = "feedback-box wrong";
+      expBox.className = "explanation-box wrong-style";
+      expBox.innerHTML = `<div class="explanation-title">❌ 不正解... (正解: ${q.options[q.answer]})</div><div>${q.explanation}</div>`;
 
       if (!mistakes.some(m => m.q === q.q)) {
         mistakes.push(q);
@@ -431,6 +561,7 @@
       }
     }
 
+    expBox.style.display = 'block';
     document.getElementById('next-btn').disabled = false;
   }
 
