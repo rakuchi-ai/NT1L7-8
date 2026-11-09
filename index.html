@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>中1英語 期末試験対策 演習アプリ</title>
+  <style>
+    :root {
+      --primary-color: #4A90E2;
+      --secondary-color: #5C6AC4;
+      --success-color: #47C1BF;
+      --danger-color: #DE3618;
+      --bg-color: #F4F6F8;
+      --card-bg: #FFFFFF;
+      --text-color: #212B36;
+      --border-radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    #app {
+      width: 100%;
+      max-width: 600px;
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      text-align: center;
+      margin-bottom: 20px;
+      color: var(--secondary-color);
+    }
+
+    .menu-btn {
+      width: 100%;
+      padding: 16px;
+      margin-bottom: 12px;
+      background-color: #FFFFFF;
+      border: 2px solid var(--primary-color);
+      border-radius: var(--border-radius);
+      color: var(--primary-color);
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .menu-btn:hover, .menu-btn:active {
+      background-color: var(--primary-color);
+      color: #FFFFFF;
+    }
+
+    .badge {
+      background-color: var(--danger-color);
+      color: white;
+      border-radius: 12px;
+      padding: 2px 8px;
+      font-size: 0.85rem;
+    }
+
+    .screen {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .active {
+      display: flex;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background-color: #E4E7EB;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background-color: var(--primary-color);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+      color: #637381;
+    }
+
+    .question-box {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .options-grid {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .option-btn {
+      padding: 14px 16px;
+      background-color: #F9FAFB;
+      border: 1px solid #DFE3E8;
+      border-radius: var(--border-radius);
+      text-align: left;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .option-btn:hover {
+      background-color: #F4F6F8;
+    }
+
+    .option-btn.correct {
+      background-color: #E3F8F7;
+      border-color: var(--success-color);
+      color: #007ACE;
+      font-weight: bold;
+    }
+
+    .option-btn.wrong {
+      background-color: #FBEAE5;
+      border-color: var(--danger-color);
+      color: var(--danger-color);
+      font-weight: bold;
+    }
+
+    .feedback-box {
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: var(--border-radius);
+      font-weight: bold;
+      text-align: center;
+      display: none;
+    }
+
+    .feedback-box.correct {
+      background-color: #E3F8F7;
+      color: #007ACE;
+      display: block;
+    }
+
+    .feedback-box.wrong {
+      background-color: #FBEAE5;
+      color: var(--danger-color);
+      display: block;
+    }
+
+    .action-btn {
+      width: 100%;
+      padding: 14px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: auto;
+    }
+
+    .action-btn:disabled {
+      background-color: #C4CDD5;
+      cursor: not-allowed;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--primary-color);
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="app">
+  <!-- メニュー画面 -->
+  <div id="menu-screen" class="screen active">
+    <h1>期末試験演習アプリ (中1)</h1>
+    <p style="text-align: center; color: #637381; margin-bottom: 24px; font-size: 0.9rem;">学習したい分野を選択してください</p>
+    
+    <button class="menu-btn" onclick="startQuiz('L7_grammar')">
+      <span>① Lesson 7 文法</span>
+      <span style="font-size:0.8rem; color:#888;">(進行形・進行形にしない動詞)</span>
+    </button>
+    <button class="menu-btn" onclick="startQuiz('L7_read')">
+      <span>② Lesson 7 READ</span>
+      <span style="font-size:0.8rem; color:#888;">(Hospital Clowns)</span>
+    </button>
+    <button class="menu-btn" onclick="startQuiz('L8_grammar')">
+      <span>③ Lesson 8 文法</span>
+      <span style="font-size:0.8rem; color:#888;">(過去形：規則・不規則)</span>
+    </button>
+    <button class="menu-btn" onclick="startQuiz('L8_read')">
+      <span>④ Lesson 8 READ</span>
+      <span style="font-size:0.8rem; color:#888;">(Greetings from Alaska)</span>
+    </button>
+    <button class="menu-btn" onclick="startQuiz('mistakes')">
+      <span>⑤ 間違えた問題</span>
+      <span id="mistake-count" class="badge">0</span>
+    </button>
+  </div>
+
+  <!-- 問題画面 -->
+  <div id="quiz-screen" class="screen">
+    <div class="top-bar">
+      <button class="back-btn" onclick="confirmExit()">← メニューに戻る</button>
+      <span id="category-title" style="font-weight: bold; font-size: 0.9rem;"></span>
+    </div>
+
+    <div class="progress-bar">
+      <div id="progress-fill" class="progress-fill"></div>
+    </div>
+
+    <div class="quiz-header">
+      <span id="question-number"></span>
+    </div>
+
+    <div id="question-text" class="question-box"></div>
+
+    <div id="options-container" class="options-grid"></div>
+
+    <div id="feedback" class="feedback-box"></div>
+
+    <button id="next-btn" class="action-btn" onclick="nextQuestion()" disabled>次へ進む</button>
+  </div>
+
+  <!-- 結果画面 -->
+  <div id="result-screen" class="screen">
+    <h1>演習完了！</h1>
+    <div style="text-align: center; margin: 30px 0;">
+      <p style="font-size: 1.2rem; margin-bottom: 10px;">あなたのスコア</p>
+      <p id="score-text" style="font-size: 2.5rem; font-weight: bold; color: var(--primary-color);"></p>
+    </div>
+    <button class="action-btn" onclick="showMenu()">メニューへ戻る</button>
+  </div>
+</div>
+
+<script>
+  const questionBank = {
+    L7_grammar: [
+      { q: "次の動詞の...ing形として正しいものを選びなさい：[ lie ]", options: ["lying", "lieing", "lyingg", "lies"], answer: 0 },
+      { q: "「私は今、父の車を洗っています。」\nI (  ) washing my father’s car now.", options: ["am", "is", "are", "do"], answer: 0 },
+      { q: "「カオリは今、自分の部屋で勉強しています。」\nKaori (  ) studying in her room now.", options: ["are", "am", "is", "does"], answer: 2 },
+      { q: "カッコ内の語を適当な形にしなさい：\nSam is ( lie ) on the bed.", options: ["lieing", "lying", "lyed", "lies"], answer: 1 },
+      { q: "「私は彼女のお母さんをよく知っています。」\nI (  ) her mother very well.", options: ["know", "am knowing", "knows", "is knowing"], answer: 0 },
+      { q: "「メアリーは今、夕食を食べています。」\nMary (  ) dinner now.", options: ["has", "is having", "have", "is have"], answer: 1 },
+      { q: "英文の誤りを直した正しい文を選びなさい：\n[ I’m eat an apple now. ]", options: ["I’m eating an apple now.", "I eat an apple now.", "I’m eatting an apple now.", "I am eat an apple now."], answer: 0 },
+      { q: "英文の誤りを直した正しい文を選びなさい：\n[ We are wanting two dogs. ]", options: ["We want two dogs.", "We are want two dogs.", "We wanting two dogs.", "We wants two dogs."], answer: 0 }
+    ],
+    L7_read: [
+      { q: "空所(ア)に入る適当な語を選びなさい：\nDo you have any ideas ( ア ) the report?", options: ["about", "between", "from", "around"], answer: 0 },
+      { q: "空所(イ)に入る適当な語を選びなさい：\nWhat is the difference ( イ ) hospital clowns and circus clowns?", options: ["for", "between", "from", "around"], answer: 1 },
+      { q: "空所(ウ)に入る適当な語を選びなさい：\nThe children are away ( ウ ) their families, so they are sometimes lonely.", options: ["from", "at", "between", "around"], answer: 0 },
+      { q: "空所(エ)に入る適当な語を選びなさい：\nNow, many hospital clowns visit hospitals ( エ ) the world.", options: ["around", "between", "from", "by"], answer: 0 },
+      { q: "「彼女はテレビを見ているところですか。」を表す正しい英文を選びなさい。", options: ["Is she watching TV?", "Does she watch TV?", "Is she watch TV?", "Are she watching TV?"], answer: 0 }
+    ],
+    L8_grammar: [
+      { q: "次の動詞の過去形として正しいものを選びなさい：[ stop ]", options: ["stoped", "stopped", "stoping", "stops"], answer: 1 },
+      { q: "次の動詞の過去形として正しいものを選びなさい：[ write ]", options: ["writed", "wrote", "written", "writing"], answer: 1 },
+      { q: "「私は昨晩、数学を勉強しました。」\nI (  ) math last night.", options: ["study", "studies", "studied", "was studied"], answer: 2 },
+      { q: "「ボブは２日前に自分の車を洗いました。」\nBob washed his car two days (  ).", options: ["ago", "before", "last", "after"], answer: 0 },
+      { q: "「私は昨夜、スマートフォンを使いませんでした。」\nI (  ) use my smartphone last night.", options: ["don't", "didn't", "wasn't", "not"], answer: 1 },
+      { q: "「誰が居間を掃除しましたか。」—「マイクがしました。」\n(  ) cleaned the living room? — Mike did.", options: ["What", "Who", "Where", "When"], answer: 1 },
+      { q: "「トムは昨日図書館へ行きました。」を否定文にしなさい。", options: ["Tom didn't go to the library yesterday.", "Tom didn't went to the library yesterday.", "Tom doesn't go to the library yesterday.", "Tom wasn't go to the library yesterday."], answer: 0 }
+    ],
+    L8_read: [
+      { q: "空所(ア)(イ)に入る適当な語を選びなさい：\nDenali National Park is ( ア )( イ ) the 11 national parks in Alaska.", options: ["one of", "some of", "first of", "part of"], answer: 0 },
+      { q: "「彼らはバスに近づいて来ました。」\nThey (  ) close to our bus.", options: ["came", "come", "coming", "comes"], answer: 0 },
+      { q: "「僕は彼らの写真をたくさん撮りました。」\nI (  ) many pictures of them.", options: ["take", "took", "taken", "taking"], answer: 1 },
+      { q: "「家族と僕は３日前にツアーバスでここに来ました。」を表す正しい英文を選びなさい。", options: [
+          "My family and I came here on the tour bus three days ago.",
+          "My family and I come here on the tour bus three days ago.",
+          "My family and I came here three days ago on the tour bus.",
+          "My family and I was came here on the tour bus three days ago."
+        ], answer: 0 }
+    ]
+  };
+
+  let currentCategory = '';
+  let currentQuestions = [];
+  let currentIndex = 0;
+  let score = 0;
+  let mistakes = JSON.parse(localStorage.getItem('english_app_mistakes') || '[]');
+
+  updateMistakeCount();
+
+  function updateMistakeCount() {
+    document.getElementById('mistake-count').innerText = mistakes.length;
+  }
+
+  function saveMistakes() {
+    localStorage.setItem('english_app_mistakes', JSON.stringify(mistakes));
+    updateMistakeCount();
+  }
+
+  function showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+  }
+
+  function showMenu() {
+    showScreen('menu-screen');
+    updateMistakeCount();
+  }
+
+  function startQuiz(category) {
+    currentCategory = category;
+    currentIndex = 0;
+    score = 0;
+
+    if (category === 'mistakes') {
+      if (mistakes.length === 0) {
+        alert('間違えた問題はありません！');
+        return;
+      }
+      currentQuestions = [...mistakes];
+    } else {
+      currentQuestions = [...questionBank[category]];
+    }
+
+    currentQuestions.sort(() => Math.random() - 0.5);
+
+    const categoryNames = {
+      'L7_grammar': 'Lesson 7 文法',
+      'L7_read': 'Lesson 7 READ',
+      'L8_grammar': 'Lesson 8 文法',
+      'L8_read': 'Lesson 8 READ',
+      'mistakes': '間違えた問題'
+    };
+    document.getElementById('category-title').innerText = categoryNames[category];
+
+    showScreen('quiz-screen');
+    loadQuestion();
+  }
+
+  function loadQuestion() {
+    const q = currentQuestions[currentIndex];
+    
+    const progress = ((currentIndex) / currentQuestions.length) * 100;
+    document.getElementById('progress-fill').style.width = `${progress}%`;
+    document.getElementById('question-number').innerText = `問題 ${currentIndex + 1} / ${currentQuestions.length}`;
+    
+    document.getElementById('question-text').innerText = q.q;
+
+    const optionsContainer = document.getElementById('options-container');
+    optionsContainer.innerHTML = '';
+
+    q.options.forEach((opt, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.innerText = `${idx + 1}. ${opt}`;
+      btn.onclick = () => checkAnswer(idx);
+      optionsContainer.appendChild(btn);
+    });
+
+    document.getElementById('feedback').className = 'feedback-box';
+    document.getElementById('feedback').style.display = 'none';
+    document.getElementById('next-btn').disabled = true;
+  }
+
+  function checkAnswer(selectedIdx) {
+    const q = currentQuestions[currentIndex];
+    const buttons = document.querySelectorAll('.option-btn');
+    
+    buttons.forEach(btn => btn.disabled = true);
+
+    const feedback = document.getElementById('feedback');
+
+    if (selectedIdx === q.answer) {
+      buttons[selectedIdx].classList.add('correct');
+      feedback.innerText = "正解！";
+      feedback.className = "feedback-box correct";
+      score++;
+      
+      if (currentCategory === 'mistakes') {
+        mistakes = mistakes.filter(m => m.q !== q.q);
+        saveMistakes();
+      }
+    } else {
+      buttons[selectedIdx].classList.add('wrong');
+      buttons[q.answer].classList.add('correct');
+      feedback.innerText = `不正解... 正解は: ${q.options[q.answer]}`;
+      feedback.className = "feedback-box wrong";
+
+      if (!mistakes.some(m => m.q === q.q)) {
+        mistakes.push(q);
+        saveMistakes();
+      }
+    }
+
+    document.getElementById('next-btn').disabled = false;
+  }
+
+  function nextQuestion() {
+    currentIndex++;
+    if (currentIndex < currentQuestions.length) {
+      loadQuestion();
+    } else {
+      showResult();
+    }
+  }
+
+  function showResult() {
+    document.getElementById('progress-fill').style.width = '100%';
+    document.getElementById('score-text').innerText = `${score} / ${currentQuestions.length}`;
+    showScreen('result-screen');
+  }
+
+  function confirmExit() {
+    if (confirm('途中でやめますか？（進捗や間違いデータは保持されます）')) {
+      showMenu();
+    }
+  }
+</script>
+</body>
+</html>
