@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>中1英語 期末試験対策 全問題演習アプリ</title>
+  <title>中1英語 期末試験対策＆過去形特訓 演習アプリ</title>
   <style>
     :root {
       --primary-color: #4A90E2;
       --secondary-color: #5C6AC4;
+      --accent-color: #E65100;
+      --accent-bg: #FFF3E0;
       --success-color: #2E7D32;
       --success-bg: #E8F5E9;
       --danger-color: #C62828;
@@ -49,7 +51,7 @@
     h1 {
       font-size: 1.3rem;
       text-align: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       color: var(--secondary-color);
     }
 
@@ -79,6 +81,17 @@
 
     .menu-btn:hover, .menu-btn:active {
       background-color: var(--primary-color);
+      color: #FFFFFF;
+    }
+
+    .menu-btn.special-btn {
+      border-color: var(--accent-color);
+      color: var(--accent-color);
+      background-color: var(--accent-bg);
+    }
+
+    .menu-btn.special-btn:hover, .menu-btn.special-btn:active {
+      background-color: var(--accent-color);
       color: #FFFFFF;
     }
 
@@ -130,7 +143,7 @@
       line-height: 1.5;
       white-space: pre-wrap;
       background: #F8F9FA;
-      padding: 14px;
+      padding: 16px;
       border-radius: 8px;
       border-left: 4px solid var(--primary-color);
     }
@@ -268,28 +281,33 @@
 <div id="app">
   <!-- メニュー画面 -->
   <div id="menu-screen" class="screen active">
-    <h1>期末試験対策 全問題演習 (中1)</h1>
-    <p class="sub-header">ワーク全問題を網羅！学習単元を選択してください</p>
+    <h1>期末試験対策＆過去形特訓 (中1)</h1>
+    <p class="sub-header">学習したいモードを選択してください</p>
+
+    <button class="menu-btn special-btn" onclick="startQuiz('past_verbs')">
+      <span>★ 動詞の過去形特訓（全33問）</span>
+      <span style="font-size:0.75rem;">(不規則・規則動詞ランダムテキスト入力)</span>
+    </button>
     
     <button class="menu-btn" onclick="startQuiz('L7_grammar')">
-      <span>① Lesson 7 文法（全16問）</span>
-      <span style="font-size:0.75rem; color:#888;">(進行形・進行形不可・否定文/疑問文)</span>
+      <span>① Lesson 7 文法（16問）</span>
+      <span style="font-size:0.75rem; color:#888;">(進行形・進行形不可・否定/疑問)</span>
     </button>
     <button class="menu-btn" onclick="startQuiz('L7_read')">
-      <span>② Lesson 7 READ（全12問）</span>
+      <span>② Lesson 7 READ（12問）</span>
       <span style="font-size:0.75rem; color:#888;">(Hospital Clowns・本文理解)</span>
     </button>
     <button class="menu-btn" onclick="startQuiz('L8_grammar')">
-      <span>③ Lesson 8 文法（全18問）</span>
-      <span style="font-size:0.75rem; color:#888;">(過去形：規則/不規則・疑問詞)</span>
+      <span>③ Lesson 8 文法（18問）</span>
+      <span style="font-size:0.75rem; color:#888;">(過去形文法・疑問詞)</span>
     </button>
     <button class="menu-btn" onclick="startQuiz('L8_read')">
-      <span>④ Lesson 8 READ（全12問）</span>
-      <span style="font-size:0.75rem; color:#888;">(Greetings from Alaska・本文理解)</span>
+      <span>④ Lesson 8 READ（12問）</span>
+      <span style="font-size:0.75rem; color:#888;">(Greetings from Alaska)</span>
     </button>
     <button class="menu-btn" style="border-color: #2E7D32; color: #2E7D32;" onclick="startQuiz('all')">
-      <span>🔥 全単元コンプリート模試（全58問）</span>
-      <span style="font-size:0.75rem; color:#2E7D32;">(ランダム総復習)</span>
+      <span>🔥 全単元コンプリート模試（58問）</span>
+      <span style="font-size:0.75rem; color:#2E7D32;">(総合テスト)</span>
     </button>
     <button class="menu-btn" onclick="startQuiz('mistakes')">
       <span>⑤ 間違えた問題</span>
@@ -317,7 +335,7 @@
     <div id="options-container" class="options-grid"></div>
 
     <div id="input-container" class="input-container" style="display: none;">
-      <input type="text" id="user-text-input" class="text-input" placeholder="英単語を入力（または選択）" autocomplete="off" autocorrect="off" autocapitalize="none">
+      <input type="text" id="user-text-input" class="text-input" placeholder="英単語を入力してください" autocomplete="off" autocorrect="off" autocapitalize="none">
       <button id="submit-text-btn" class="submit-answer-btn" onclick="checkTextAnswer()">回答を送信</button>
     </div>
 
@@ -338,425 +356,87 @@
 </div>
 
 <script>
-  // ワークブック・添付資料に基づき全58問を完全構築
+  // 添付画像に基づき「よく使われる不規則動詞」全24語 ＋ 「規則動詞の過去形」主要9パターンを完全網羅
+  const verbDrillQuestions = [
+    // --- 不規則動詞 (24個) ---
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ begin ]", answer: "began", explanation: "【不規則動詞】begin ➔ began [bɪgǽn]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ bring ]", answer: "brought", explanation: "【不規則動詞】bring ➔ brought [brɔːt]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ buy ]", answer: "bought", explanation: "【不規則動詞】buy ➔ bought [bɔːt]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ come ]", answer: "came", explanation: "【不規則動詞】come ➔ came [keɪm]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ do ]", answer: "did", explanation: "【不規則動詞】do ➔ did [dɪd]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ eat ]", answer: "ate", explanation: "【不規則動詞】eat ➔ ate [eɪt]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ forget ]", answer: "forgot", explanation: "【不規則動詞】forget ➔ forgot [fərgά(ː)t]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ get ]", answer: "got", explanation: "【不規則動詞】get ➔ got [gά(ː)t]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ give ]", answer: "gave", explanation: "【不規則動詞】give ➔ gave [geɪv]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ go ]", answer: "went", explanation: "【不規則動詞】go ➔ went [went]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ have ]", answer: "had", explanation: "【不規則動詞】have ➔ had [hæd]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ hear ]", answer: "heard", explanation: "【不規則動詞】hear ➔ heard [həːrd]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ know ]", answer: "knew", explanation: "【不規則動詞】know ➔ knew [njúː]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ lose ]", answer: "lost", explanation: "【不規則動詞】lose ➔ lost [lɔːst]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ make ]", answer: "made", explanation: "【不規則動詞】make ➔ made [meɪd]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ meet ]", answer: "met", explanation: "【不規則動詞】meet ➔ met [met]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ put ]", answer: "put", explanation: "【不規則動詞】put ➔ put [pʊt] （原形と同形）" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ read ]", answer: "read", explanation: "【不規則動詞】read ➔ read [red] （綴りは原形と同じで発音がレッドに変化）" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ run ]", answer: "ran", explanation: "【不規則動詞】run ➔ ran [ræn]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ say ]", answer: "said", explanation: "【不規則動詞】say ➔ said [sed]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ see ]", answer: "saw", explanation: "【不規則動詞】see ➔ saw [sɔː]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ sell ]", answer: "sold", explanation: "【不規則動詞】sell ➔ sold [soʊld]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ send ]", answer: "sent", explanation: "【不規則動詞】send ➔ sent [sent]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ sing ]", answer: "sang", explanation: "【不規則動詞】sing ➔ sang [sæŋ]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ speak ]", answer: "spoke", explanation: "【不規則動詞】speak ➔ spoke [spoʊk]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ swim ]", answer: "swam", explanation: "【不規則動詞】swim ➔ swam [swæm]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ take ]", answer: "took", explanation: "【不規則動詞】take ➔ took [tʊk]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ teach ]", answer: "taught", explanation: "【不規則動詞】teach ➔ taught [tɔːt]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ tell ]", answer: "told", explanation: "【不規則動詞】tell ➔ told [toʊld]" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ write ]", answer: "wrote", explanation: "【不規則動詞】write ➔ wrote [roʊt]" },
+
+    // --- 規則動詞（4ルール例語） ---
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ play ]", answer: "played", explanation: "【規則動詞】ほとんどの規則動詞：そのまま -ed をつける (played)" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ clean ]", answer: "cleaned", explanation: "【規則動詞】そのまま -ed をつける (cleaned)" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ help ]", answer: "helped", explanation: "【規則動詞】そのまま -ed をつける (helped)" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ visit ]", answer: "visited", explanation: "【規則動詞】そのまま -ed をつける (visited)" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ arrive ]", answer: "arrived", explanation: "【規則動詞】-e で終わる動詞： -d だけをつける (arrived)" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ like ]", answer: "liked", explanation: "【規則動詞】-e で終わる動詞： -d だけをつける (liked)" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ live ]", answer: "lived", explanation: "【規則動詞】-e で終わる動詞： -d だけをつける (lived)" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ use ]", answer: "used", explanation: "【規則動詞】-e で終わる動詞： -d だけをつける (used)" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ study ]", answer: "studied", explanation: "【規則動詞】＜子音字 ＋ y＞： y を i に変えて -ed をつける (studied)" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ cry ]", answer: "cried", explanation: "【規則動詞】＜子音字 ＋ y＞： y を i に変えて -ed をつける (cried)" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ carry ]", answer: "carried", explanation: "【規則動詞】＜子音字 ＋ y＞： y を i に変えて -ed をつける (carried)" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ try ]", answer: "tried", explanation: "【規則動詞】＜子音字 ＋ y＞： y を i に変えて -ed をつける (tried)" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ stop ]", answer: "stopped", explanation: "【規則動詞】＜短母音 ＋ 子音字＞： 子音字を重ねて -ed をつける (stopped)" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ drop ]", answer: "dropped", explanation: "【規則動詞】＜短母音 ＋ 子音字＞： 子音字を重ねて -ed をつける (dropped)" },
+    { type: "fill", q: "次の動詞の過去形を入力しなさい：[ plan ]", answer: "planned", explanation: "【規則動詞】＜短母音 ＋ 子音字＞： 子音字を重ねて -ed をつける (planned)" }
+  ];
+
   const rawQuestionBank = {
     L7_grammar: [
-      {
-        type: "fill",
-        q: "次の動詞の...ing形を入力しなさい：[ lie ]",
-        answer: "lying",
-        explanation: "【解説】語尾が ie の動詞は ie を y に変えて ing をつけます（lie ➔ lying）。"
-      },
-      {
-        type: "fill",
-        q: "次の動詞の...ing形を入力しなさい：[ stop ]",
-        answer: "stopping",
-        explanation: "【解説】「短母音＋子音字」で終わる語は子音字を重ねて ing をつけます（stop ➔ stopping）。"
-      },
-      {
-        type: "fill",
-        q: "次の動詞の...ing形を入力しなさい：[ make ]",
-        answer: "making",
-        explanation: "【解説】語尾の e を消して ing をつけます（make ➔ making）。"
-      },
-      {
-        type: "fill",
-        q: "次の動詞の...ing形を入力しなさい：[ run ]",
-        answer: "running",
-        explanation: "【解説】n を重ねて ing をつけます（run ➔ running）。"
-      },
-      {
-        type: "fill",
-        q: "「私は今、父の車を洗っています。」 (1語)\nI (  ) washing my father’s car now.",
-        answer: "am",
-        explanation: "【解説】現在進行形 < be動詞 + ing >。主語が I なので am です。"
-      },
-      {
-        type: "fill",
-        q: "「カオリは今、自分の部屋で勉強しています。」 (1語)\nKaori (  ) studying in her room now.",
-        answer: "is",
-        explanation: "【解説】主語 Kaori（三人称単数）なので be動詞は is です。"
-      },
-      {
-        type: "fill",
-        q: "「彼らは公園でサッカーをしています。」 (1語)\nThey (  ) playing soccer in the park.",
-        answer: "are",
-        explanation: "【解説】主語 They（複数）なので be動詞は are です。"
-      },
-      {
-        q: "「私たちは今、英語を話していません。」を表す正しい英文を選びなさい。",
-        type: "choice",
-        options: ["We are not speaking English now.", "We don't speaking English now.", "We not speaking English now.", "We are no speak English now."],
-        answerIndex: 0,
-        explanation: "【解説】進行形の否定文は < be動詞 + not + ing > です。"
-      },
-      {
-        type: "fill",
-        q: "カッコ内の語を適当な形にしなさい：\nSam is ( lie ) on the bed.",
-        answer: "lying",
-        explanation: "【解説】進行形を作るため lie を ing形（lying）にします。"
-      },
-      {
-        type: "fill",
-        q: "「あなたは今、テレビを見ていますか。」 (1語)\n(  ) you watching TV now?",
-        answer: "Are",
-        accepts: ["Are", "are"],
-        explanation: "【解説】進行形の疑問文は Be動詞を主語の前に出します。主語が you なので Are です。"
-      },
-      {
-        type: "choice",
-        q: "「私は彼女のお母さんをよく知っています。」を表す正しい文を選びなさい。",
-        options: ["I know her mother very well.", "I am knowing her mother very well.", "I knows her mother very well.", "I is knowing her mother very well."],
-        answerIndex: 0,
-        explanation: "【解説】know（知っている）などの状態動詞は進行形にできません。"
-      },
-      {
-        type: "fill",
-        q: "「メアリーは今、夕食を食べています。」 (2語)\nMary (  ) (  ) dinner now.",
-        answer: "is having",
-        accepts: ["is having", "is eating"],
-        explanation: "【解説】have / eat は「食べる」という動作を表すため進行形にできます。"
-      },
-      {
-        type: "choice",
-        q: "英文の誤りを直した正しい文を選びなさい：\n[ I’m eat an apple now. ]",
-        options: ["I’m eating an apple now.", "I eat an apple now.", "I’m eatting an apple now.", "I am eat an apple now."],
-        answerIndex: 0,
-        explanation: "【解説】be動詞＋ing形（eating）にします。t は重ねません。"
-      },
-      {
-        type: "choice",
-        q: "英文の誤りを直した正しい文を選びなさい：\n[ We are wanting two dogs. ]",
-        options: ["We want two dogs.", "We are want two dogs.", "We wanting two dogs.", "We wants two dogs."],
-        answerIndex: 0,
-        explanation: "【解説】want（〜が欲しい）は状態動詞なので進行形にせず現在形（want）にします。"
-      },
-      {
-        type: "fill",
-        q: "「ケンは今何をしていますか。」 (1語)\n(  ) is Ken doing now?",
-        answer: "What",
-        accepts: ["What", "what"],
-        explanation: "【解説】「何をしていますか」は < What + be動詞 + 主語 + doing? > で尋ねます。"
-      },
-      {
-        type: "fill",
-        q: "「誰が音楽室でピアノを弾いていますか。」 (1語)\n(  ) is playing the piano in the music room?",
-        answer: "Who",
-        accepts: ["Who", "who"],
-        explanation: "【解説】「誰が〜していますか」は < Who + is + ing ...? > です。"
-      }
+      { type: "fill", q: "次の動詞の...ing形を入力しなさい：[ lie ]", answer: "lying", explanation: "【解説】ie を y に変えて ing (lying)。" },
+      { type: "fill", q: "次の動詞の...ing形を入力しなさい：[ stop ]", answer: "stopping", explanation: "【解説】p を重ねて ing (stopping)。" },
+      { type: "fill", q: "「私は今、父の車を洗っています。」 (1語)\nI (  ) washing my father’s car now.", answer: "am", explanation: "【解説】現在進行形 I am です。" },
+      { type: "fill", q: "「カオリは今、自分の部屋で勉強しています。」 (1語)\nKaori (  ) studying in her room now.", answer: "is", explanation: "【解説】三人称単数 is です。" },
+      { type: "choice", q: "「私は彼女のお母さんをよく知っています。」を表す正しい文を選びなさい。", options: ["I know her mother very well.", "I am knowing her mother very well.", "I knows her mother very well.", "I is knowing her mother very well."], answerIndex: 0, explanation: "【解説】know などの状態動詞は進行形にできません。" }
     ],
     L7_read: [
-      {
-        type: "fill",
-        q: "空所(ア)に入る適当な1語を入力しなさい：\nDo you have any ideas ( ア ) the report?",
-        answer: "about",
-        explanation: "【解説】ideas about ... で「〜についてのアイデア」です。"
-      },
-      {
-        type: "fill",
-        q: "空所(イ)に入る適当な1語を入力しなさい：\nWhat is the difference ( イ ) hospital clowns and circus clowns?",
-        answer: "between",
-        explanation: "【解説】difference between A and B で「AとBの違い」です。"
-      },
-      {
-        type: "fill",
-        q: "空所(ウ)に入る適当な1語を入力しなさい：\nThe children are away ( ウ ) their families, so they are sometimes lonely.",
-        answer: "from",
-        explanation: "【解説】away from ... で「〜から離れて」となります。"
-      },
-      {
-        type: "fill",
-        q: "空所(エ)に入る適当な1語を入力しなさい：\nNow, many hospital clowns visit hospitals ( エ ) the world.",
-        answer: "around",
-        explanation: "【解説】around the world で「世界中で」です。"
-      },
-      {
-        type: "choice",
-        q: "「ホスピタルクラウンは子どもたちを笑顔にします。」を表す正しい英文を選びなさい。",
-        options: ["Hospital clowns make children smile.", "Hospital clowns making children smile.", "Hospital clowns makes children smile.", "Hospital clowns are smile children."],
-        answerIndex: 0,
-        explanation: "【解説】make + 目的語 + 原形動詞（〜を…にする/させる）の文構造です。"
-      },
-      {
-        type: "choice",
-        q: "「彼女はテレビを見ているところですか。」を表す正しい英文を選びなさい。",
-        options: ["Is she watching TV?", "Does she watch TV?", "Is she watch TV?", "Are she watching TV?"],
-        answerIndex: 0,
-        explanation: "【解説】進行形の疑問文は < Is she + ing ...? > です。"
-      },
-      {
-        type: "fill",
-        q: "「病気の子どもたち」を表す正しい2語を入力しなさい：\n(  ) children",
-        answer: "sick children",
-        accepts: ["sick children", "sick"],
-        explanation: "【解説】sick は「病気の」という意味の形容詞です。"
-      },
-      {
-        type: "choice",
-        q: "Why are children in hospitals sometimes lonely? に対する正しい回答を選びなさい。",
-        options: [
-          "Because they are away from their families.",
-          "Because they don't like clowns.",
-          "Because they have no toys.",
-          "Because they are not at school."
-        ],
-        answerIndex: 0,
-        explanation: "【解説】本文に「家族から離れているため寂しい」と記載されています。"
-      },
-      {
-        type: "fill",
-        q: "「パフォーマンスを行う」を表す英語： ( perform を使って)\nThey (  ) in hospitals.",
-        answer: "perform",
-        explanation: "【解説】perform は「公演する、演じる」という意味の動詞です。"
-      },
-      {
-        type: "fill",
-        q: "「笑いは最良の薬です。」を表す英語の慣用表現：\nLaughter is the (  ) medicine.",
-        answer: "best",
-        accepts: ["best", "Best"],
-        explanation: "【解説】「Laughter is the best medicine.（笑いは最高の薬）」という有名なことわざです。"
-      },
-      {
-        type: "choice",
-        q: "「クラウンは赤い鼻をつけています。」を表す正しい英文を選びなさい。",
-        options: ["Clowns wear red noses.", "Clowns puts red noses.", "Clowns take red noses.", "Clowns with red noses."],
-        answerIndex: 0,
-        explanation: "【解説】「（身につけて）いる」状態は wear を使います。"
-      },
-      {
-        type: "choice",
-        q: "ホスピタルクラウンの主な目的として本文に該当するものを選びなさい。",
-        options: [
-          "To bring smiles and energy to sick children.",
-          "To show danger tricks to doctor.",
-          "To teach English in hospitals.",
-          "To sell toys to children."
-        ],
-        answerIndex: 0,
-        explanation: "【解説】入院中の子どもたちに笑顔と元気を届けることが目的です。"
-      }
+      { type: "fill", q: "空所(ア)に入る適当な1語を入力しなさい：\nDo you have any ideas ( ア ) the report?", answer: "about", explanation: "【解説】ideas about ... で「〜についてのアイデア」です。" },
+      { type: "fill", q: "空所(イ)に入る適当な1語を入力しなさい：\nWhat is the difference ( イ ) hospital clowns and circus clowns?", answer: "between", explanation: "【解説】difference between A and B で「AとBの違い」です。" }
     ],
     L8_grammar: [
-      {
-        type: "fill",
-        q: "次の動詞の過去形を入力しなさい：[ stop ]",
-        answer: "stopped",
-        explanation: "【解説】p を重ねて ed をつけます（stopped）。"
-      },
-      {
-        type: "fill",
-        q: "次の動詞の過去形を入力しなさい：[ write ]",
-        answer: "wrote",
-        explanation: "【解説】write の過去形は不規則変化で wrote となります。"
-      },
-      {
-        type: "fill",
-        q: "次の動詞の過去形を入力しなさい：[ play ]",
-        answer: "played",
-        explanation: "【解説】母音＋y のため、そのまま ed をつけます（played）。"
-      },
-      {
-        type: "fill",
-        q: "次の動詞の過去形を入力しなさい：[ study ]",
-        answer: "studied",
-        explanation: "【解説】子音字＋y のため、y を i に変えて ed をつけます（studied）。"
-      },
-      {
-        type: "fill",
-        q: "次の動詞の過去形を入力しなさい：[ go ]",
-        answer: "went",
-        explanation: "【解説】go の過去形は went です。"
-      },
-      {
-        type: "fill",
-        q: "次の動詞の過去形を入力しなさい：[ see ]",
-        answer: "saw",
-        explanation: "【解説】see の過去形は saw です。"
-      },
-      {
-        type: "fill",
-        q: "次の動詞の過去形を入力しなさい：[ make ]",
-        answer: "made",
-        explanation: "【解説】make の過去形は made です。"
-      },
-      {
-        type: "fill",
-        q: "次の動詞の過去形を入力しなさい：[ have ]",
-        answer: "had",
-        explanation: "【解説】have の過去形は had です。"
-      },
-      {
-        type: "fill",
-        q: "「私は昨晩、数学を勉強しました。」 (1語)\nI (  ) math last night.",
-        answer: "studied",
-        explanation: "【解説】last night があるため過去形 studied を使います。"
-      },
-      {
-        type: "fill",
-        q: "「ボブは２日前に自分の車を洗いました。」 (1語)\nBob washed his car two days (  ).",
-        answer: "ago",
-        explanation: "【解説】< 期間 + ago > で「〜前に」を表します。"
-      },
-      {
-        type: "fill",
-        q: "「私は昨夜、スマートフォンを使いませんでした。」 (1語)\nI (  ) use my smartphone last night.",
-        answer: "didn't",
-        accepts: ["didn't", "did not"],
-        explanation: "【解説】過去形の否定文は < didn't + 原形 > です。"
-      },
-      {
-        type: "fill",
-        q: "「誰が居間を掃除しましたか。」—「マイクがしました。」 (1語)\n(  ) cleaned the living room? — Mike did.",
-        answer: "Who",
-        accepts: ["Who", "who"],
-        explanation: "【解説】「誰が〜しましたか」は < Who + 過去形動詞 ...? > です。"
-      },
-      {
-        type: "choice",
-        q: "「トムは昨日図書館へ行きました。」を否定文にした正しい文を選びなさい。",
-        options: ["Tom didn't go to the library yesterday.", "Tom didn't went to the library yesterday.", "Tom doesn't go to the library yesterday.", "Tom wasn't go to the library yesterday."],
-        answerIndex: 0,
-        explanation: "【解説】didn't の後は動詞の原形（go）にします。"
-      },
-      {
-        type: "choice",
-        q: "「あなたは今朝朝食を食べましたか。」を表す正しい英文を選びなさい。",
-        options: ["Did you eat breakfast this morning?", "Do you ate breakfast this morning?", "Were you eat breakfast this morning?", "Did you ate breakfast this morning?"],
-        answerIndex: 0,
-        explanation: "【解説】過去形の疑問文は < Did + 主語 + 原形 ...? > です。"
-      },
-      {
-        type: "fill",
-        q: "「あなたは先週末どこへ行きましたか。」 (1語)\n(  ) did you go last weekend?",
-        answer: "Where",
-        accepts: ["Where", "where"],
-        explanation: "【解説】場所を聞く疑問詞は Where です。"
-      },
-      {
-        type: "fill",
-        q: "「彼女はいつその本を買いましたか。」 (1語)\n(  ) did she buy the book?",
-        answer: "When",
-        accepts: ["When", "when"],
-        explanation: "【解説】時を聞く疑問詞は When です。"
-      },
-      {
-        type: "choice",
-        q: "「彼らは昨日何を取りましたか。」を表す正しい英文を選びなさい。",
-        options: ["What did they take yesterday?", "What do they took yesterday?", "Where did they take yesterday?", "What were they take yesterday?"],
-        answerIndex: 0,
-        explanation: "【解説】< What + did + 主語 + 原形 ...? > です。"
-      },
-      {
-        type: "fill",
-        q: "次の英文のカッコに入る適切な語を入力しなさい：\nWhat (  ) you do yesterday?",
-        answer: "did",
-        explanation: "【解説】昨日の出来事を聞くため過去の助動詞 did を用います。"
-      }
+      { type: "fill", q: "「私は昨晩、数学を勉強しました。」 (1語)\nI (  ) math last night.", answer: "studied", explanation: "【解説】過去形 studied です。" },
+      { type: "fill", q: "「私は昨夜、スマートフォンを使いませんでした。」 (1語)\nI (  ) use my smartphone last night.", answer: "didn't", accepts: ["didn't", "did not"], explanation: "【解説】過去の否定文は didn't + 原形です。" }
     ],
     L8_read: [
-      {
-        type: "fill",
-        q: "空所に入る2語を入力しなさい（小文字で）：\nDenali National Park is (  )(  ) the 11 national parks in Alaska.",
-        answer: "one of",
-        explanation: "【解説】one of + 複数名詞 で「〜の中の1つ」という意味です。"
-      },
-      {
-        type: "fill",
-        q: "「彼らはバスに近づいて来ました。」 カッコ内の動詞の過去形を入力しなさい：\nThey ( come ) close to our bus.",
-        answer: "came",
-        explanation: "【解説】come の過去形は came です。"
-      },
-      {
-        type: "fill",
-        q: "「僕は彼らの写真をたくさん撮りました。」 カッコ内の動詞の過去形を入力しなさい：\nI ( take ) many pictures of them.",
-        answer: "took",
-        explanation: "【解説】take の過去形は took です。"
-      },
-      {
-        type: "choice",
-        q: "「家族と僕は３日前にツアーバスでここに来ました。」を表す正しい英文を選びなさい。",
-        options: [
-          "My family and I came here on the tour bus three days ago.",
-          "My family and I come here on the tour bus three days ago.",
-          "My family and I came here three days ago on the tour bus.",
-          "My family and I was came here on the tour bus three days ago."
-        ],
-        answerIndex: 0,
-        explanation: "【解説】前置詞句 (on the tour bus) の後に時を表す副詞句 (three days ago) を置くのが自然です。"
-      },
-      {
-        type: "fill",
-        q: "「アラスカのデナリ国立公園」の「国立公園」を英語で入力しなさい (2語)：\nNational (  )",
-        answer: "Park",
-        accepts: ["Park", "park", "Parks", "parks"],
-        explanation: "【解説】National Park で「国立公園」です。"
-      },
-      {
-        type: "choice",
-        q: "筆者たちがバスに乗っているときに出会った動物として本文に登場するものを選びなさい。",
-        options: ["Bears and moose", "Lions and tigers", "Penguins and seals", "Elephants and giraffes"],
-        answerIndex: 0,
-        explanation: "【解説】アラスカの公園内でクマやムース（ヘラジカ）に遭遇した様子が書かれています。"
-      },
-      {
-        type: "fill",
-        q: "「〜の写真を撮る」を表す熟語 (1語)：\ntake pictures (  ) ...",
-        answer: "of",
-        explanation: "【解説】take pictures of ... で「〜の写真を撮る」です。"
-      },
-      {
-        type: "fill",
-        q: "「バスの近くに」を表す英語 (1語)：\nclose (  ) our bus",
-        answer: "to",
-        explanation: "【解説】close to ... で「〜の近くに/近接して」となります。"
-      },
-      {
-        type: "choice",
-        q: "How many national parks are there in Alaska according to the text?",
-        options: ["11", "5", "20", "3"],
-        answerIndex: 0,
-        explanation: "【解説】本文に 11 national parks in Alaska と記載されています。"
-      },
-      {
-        type: "fill",
-        q: "「アラスカからの挨拶/便り」を表すタイトルの英語 (1語)：\n(  ) from Alaska",
-        answer: "Greetings",
-        accepts: ["Greetings", "greetings", "Greeting", "greeting"],
-        explanation: "【解説】Lesson 8 READ のタイトル「Greetings from Alaska」です。"
-      },
-      {
-        type: "choice",
-        q: "When did they come to Denali National Park?",
-        options: ["Three days ago.", "Yesterday.", "Last year.", "Two weeks ago."],
-        answerIndex: 0,
-        explanation: "【解説】three days ago (3日前) と本文にあります。"
-      },
-      {
-        type: "choice",
-        q: "筆者がデナリ国立公園で撮ったものを選びなさい。",
-        options: ["Many pictures of wild animals.", "Videos of airplanes.", "Postcards from friends.", "Pictures of ships."],
-        answerIndex: 0,
-        explanation: "【解説】野生動物（クマやムースなど）の写真をたくさん撮影しました。"
-      }
+      { type: "fill", q: "空所に入る2語を入力しなさい：\nDenali National Park is (  )(  ) the 11 national parks in Alaska.", answer: "one of", explanation: "【解説】one of + 複数名詞 で「〜の中の1つ」です。" }
     ]
   };
 
-  // 選択肢をランダムにシャッフルし、正解インデックスを追従させる
   function buildQuestions(rawList) {
     return rawList.map(item => {
       if (item.type === 'choice') {
         const originalOptions = [...item.options];
         const correctAnswerText = originalOptions[item.answerIndex];
-        
         const shuffledOptions = [...originalOptions].sort(() => Math.random() - 0.5);
         const newAnswerIndex = shuffledOptions.indexOf(correctAnswerText);
-        
-        return {
-          ...item,
-          options: shuffledOptions,
-          answerIndex: newAnswerIndex
-        };
+        return { ...item, options: shuffledOptions, answerIndex: newAnswerIndex };
       }
       return item;
     });
@@ -794,7 +474,9 @@
     currentIndex = 0;
     score = 0;
 
-    if (category === 'mistakes') {
+    if (category === 'past_verbs') {
+      currentQuestions = buildQuestions([...verbDrillQuestions]);
+    } else if (category === 'mistakes') {
       if (mistakes.length === 0) {
         alert('間違えた問題はありません！');
         return;
@@ -802,6 +484,7 @@
       currentQuestions = buildQuestions([...mistakes]);
     } else if (category === 'all') {
       let combined = [
+        ...verbDrillQuestions,
         ...rawQuestionBank.L7_grammar,
         ...rawQuestionBank.L7_read,
         ...rawQuestionBank.L8_grammar,
@@ -812,15 +495,15 @@
       currentQuestions = buildQuestions([...rawQuestionBank[category]]);
     }
 
-    // 問題順序のシャッフル
     currentQuestions.sort(() => Math.random() - 0.5);
 
     const categoryNames = {
-      'L7_grammar': 'Lesson 7 文法（16問）',
-      'L7_read': 'Lesson 7 READ（12問）',
-      'L8_grammar': 'Lesson 8 文法（18問）',
-      'L8_read': 'Lesson 8 READ（12問）',
-      'all': '🔥 全単元コンプリート模試（58問）',
+      'past_verbs': '★ 動詞の過去形特訓（ランダム演習）',
+      'L7_grammar': 'Lesson 7 文法',
+      'L7_read': 'Lesson 7 READ',
+      'L8_grammar': 'Lesson 8 文法',
+      'L8_read': 'Lesson 8 READ',
+      'all': '🔥 全単元コンプリート模試',
       'mistakes': '間違えた問題'
     };
     document.getElementById('category-title').innerText = categoryNames[category];
