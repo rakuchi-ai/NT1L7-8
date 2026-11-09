@@ -109,7 +109,7 @@
       height: 100%;
     }
 
-    .active {
+    .screen.active {
       display: flex;
     }
 
@@ -302,7 +302,7 @@
       <span style="font-size:0.75rem; color:#888;">(過去形文法・否定/疑問文・全文英作文)</span>
     </button>
     <button class="menu-btn" onclick="startQuiz('L8_read')">
-      <span>④ Lesson 8 READ（全12问）</span>
+      <span>④ Lesson 8 READ（全12問）</span>
       <span style="font-size:0.75rem; color:#888;">(Greetings from Alaska)</span>
     </button>
     <button class="menu-btn" style="border-color: #2E7D32; color: #2E7D32;" onclick="startQuiz('all')">
@@ -422,20 +422,16 @@
       { type: "choice", q: "英文の誤りを直した正しい文を選びなさい：\n[ We are wanting two dogs. ]", options: ["We want two dogs.", "We are want two dogs.", "We wanting two dogs.", "We wants two dogs."], answerIndex: 0, explanation: "【解説】want は進行形不可のため現在形 want です。" },
       { type: "fill", q: "「ケンは今何をしていますか。」 (1語)\n(  ) is Ken doing now?", answer: "What", accepts: ["What", "what"], explanation: "【解説】「何をしていますか」は What is Ken doing? です。" },
       { type: "fill", q: "「誰が音楽室でピアノを弾いていますか。」 (1語)\n(  ) is playing the piano in the music room?", answer: "Who", accepts: ["Who", "who"], explanation: "【解説】「誰が」は Who です。" },
-
-      // --- 【追加10問】L7進行形の否定文・疑問文（全文入力5問＋穴埋め/選択5問） ---
       {
         type: "fill",
-        q: "【全文入力】次の文を進行形の否定文に書き換え、全文を入力しなさい：
-Ken is playing tennis now.",
+        q: "【全文入力】次の文を進行形の否定文に書き換え、全文を入力しなさい：\nKen is playing tennis now.",
         answer: "Ken is not playing tennis now.",
         accepts: ["Ken is not playing tennis now.", "Ken isn't playing tennis now.", "Ken is not playing tennis now", "Ken isn't playing tennis now"],
         explanation: "【解説】進行形の否定文は is の後ろに not を入れます。< Ken is not [isn't] playing tennis now. >"
       },
       {
         type: "fill",
-        q: "【全文入力】次の文を進行形の疑問文に書き換え、全文を入力しなさい：
-They are watching TV now.",
+        q: "【全文入力】次の文を進行形の疑問文に書き換え、全文を入力しなさい：\nThey are watching TV now.",
         answer: "Are they watching TV now?",
         accepts: ["Are they watching TV now?", "Are they watching TV now"],
         explanation: "【解説】進行形の疑問文は be動詞（Are）を主語の前に出します。< Are they watching TV now? >"
@@ -463,16 +459,14 @@ They are watching TV now.",
       },
       {
         type: "fill",
-        q: "「エミは今、ピアノを弾いていません。」 (2語で空所補充)
-Emi (  )(  ) playing the piano now.",
+        q: "「エミは今、ピアノを弾いていません。」 (2語で空所補充)\nEmi (  )(  ) playing the piano now.",
         answer: "is not",
         accepts: ["is not", "isn't"],
         explanation: "【解説】is not または isn't を入れます。"
       },
       {
         type: "fill",
-        q: "「彼らは今、朝食を食べていますか。」 (1語で空所補充)
-(  ) they having breakfast now?",
+        q: "「彼らは今、朝食を食べていますか。」 (1語で空所補充)\n(  ) they having breakfast now?",
         answer: "Are",
         accepts: ["Are", "are"],
         explanation: "【解説】主語が they なので文頭は Are となります。"
@@ -503,8 +497,7 @@ Emi (  )(  ) playing the piano now.",
       },
       {
         type: "fill",
-        q: "「男の子たちは今どこでサッカーをしていますか。」 (1語で空所補充)
-(  ) are the boys playing soccer now?",
+        q: "「男の子たちは今どこでサッカーをしていますか。」 (1語で空所補充)\n(  ) are the boys playing soccer now?",
         answer: "Where",
         accepts: ["Where", "where"],
         explanation: "【解説】「どこで」を尋ねる疑問詞 Where を文頭に置きます。"
@@ -513,30 +506,26 @@ Emi (  )(  ) playing the piano now.",
     L7_read: [
       {
         type: "fill",
-        q: "空所(ア)に入る適当な1語を入力しなさい：
-Do you have any ideas ( ア ) the report?",
+        q: "空所(ア)に入る適当な1語を入力しなさい：\nDo you have any ideas ( ア ) the report?",
         answer: "for",
         accepts: ["for", "about"],
         explanation: "【解説】原文：ideas for the report（レポートのためのアイデア・考え）。forが正解です。"
       },
       {
         type: "fill",
-        q: "空所(イ)に入る適当な1語を入力しなさい：
-What is the difference ( イ ) hospital clowns and circus clowns?",
+        q: "空所(イ)に入る適当な1語を入力しなさい：\nWhat is the difference ( イ ) hospital clowns and circus clowns?",
         answer: "between",
         explanation: "【解説】difference between A and B で「AとBの違い」です。"
       },
       {
         type: "fill",
-        q: "空所(ウ)に入る適当な1語を入力しなさい：
-The children are away ( ウ ) their families, so they are sometimes lonely.",
+        q: "空所(ウ)に入る適当な1語を入力しなさい：\nThe children are away ( ウ ) their families, so they are sometimes lonely.",
         answer: "from",
         explanation: "【解説】away from ... で「〜から離れて」となります。"
       },
       {
         type: "fill",
-        q: "空所(エ)に入る適当な1語を入力しなさい：
-Now, many hospital clowns visit hospitals ( エ ) the world.",
+        q: "空所(エ)に入る適当な1語を入力しなさい：\nNow, many hospital clowns visit hospitals ( エ ) the world.",
         answer: "around",
         explanation: "【解説】around the world で「世界中で」です。"
       },
@@ -556,8 +545,7 @@ Now, many hospital clowns visit hospitals ( エ ) the world.",
       },
       {
         type: "fill",
-        q: "「病気の子どもたち」を表す正しい1語を入力しなさい：
-(  ) children",
+        q: "「病気の子どもたち」を表す正しい1語を入力しなさい：\n(  ) children",
         answer: "sick",
         accepts: ["sick", "Sick"],
         explanation: "【解説】sick は「病気の」という意味の形容詞です。"
@@ -576,15 +564,13 @@ Now, many hospital clowns visit hospitals ( エ ) the world.",
       },
       {
         type: "fill",
-        q: "「パフォーマンスを行う」を表す英語の動詞を入力しなさい：
-They (  ) in hospitals.",
+        q: "「パフォーマンスを行う」を表す英語の動詞を入力しなさい：\nThey (  ) in hospitals.",
         answer: "perform",
         explanation: "【解説】perform は「公演する、演じる」という意味の動詞です。"
       },
       {
         type: "fill",
-        q: "「笑いは最良の薬です。」を表す英語の慣用表現：
-Laughter is the (  ) medicine.",
+        q: "「笑いは最良の薬です。」を表す英語の慣用表現：\nLaughter is the (  ) medicine.",
         answer: "best",
         accepts: ["best", "Best"],
         explanation: "【解説】「Laughter is the best medicine.（笑いは最高の薬）」という有名なことわざです。"
@@ -618,29 +604,19 @@ Laughter is the (  ) medicine.",
       { type: "fill", q: "次の動詞の過去形を入力しなさい：[ see ]", answer: "saw", explanation: "【解説】see の過去形は saw です。" },
       { type: "fill", q: "次の動詞の過去形を入力しなさい：[ make ]", answer: "made", explanation: "【解説】make の過去形は made です。" },
       { type: "fill", q: "次の動詞の過去形を入力しなさい：[ have ]", answer: "had", explanation: "【解説】have の過去形は had です。" },
-      { type: "fill", q: "「私は昨晩、数学を勉強しました。」 (1語)
-I (  ) math last night.", answer: "studied", explanation: "【解説】過去形 studied です。" },
-      { type: "fill", q: "「ボブは２日前に自分の車を洗いました。」 (1語)
-Bob washed his car two days (  ).", answer: "ago", explanation: "【解説】< 期間 + ago > で「〜前に」です。" },
-      { type: "fill", q: "「私は昨夜、スマートフォンを使いませんでした。」 (1語)
-I (  ) use my smartphone last night.", answer: "didn't", accepts: ["didn't", "did not"], explanation: "【解説】過去の否定文は didn't + 原形です。" },
-      { type: "fill", q: "「誰が居間を掃除しましたか。」—「マイクがしました。」 (1語)
-(  ) cleaned the living room? — Mike did.", answer: "Who", accepts: ["Who", "who"], explanation: "【解説】主語を尋ねる Who cleaned ...? です。" },
+      { type: "fill", q: "「私は昨晩、数学を勉強しました。」 (1語)\nI (  ) math last night.", answer: "studied", explanation: "【解説】過去形 studied です。" },
+      { type: "fill", q: "「ボブは２日前に自分の車を洗いました。」 (1語)\nBob washed his car two days (  ).", answer: "ago", explanation: "【解説】< 期間 + ago > で「〜前に」です。" },
+      { type: "fill", q: "「私は昨夜、スマートフォンを使いませんでした。」 (1語)\nI (  ) use my smartphone last night.", answer: "didn't", accepts: ["didn't", "did not"], explanation: "【解説】過去の否定文は didn't + 原形です。" },
+      { type: "fill", q: "「誰が居間を掃除しましたか。」—「マイクがしました。」 (1語)\n(  ) cleaned the living room? — Mike did.", answer: "Who", accepts: ["Who", "who"], explanation: "【解説】主語を尋ねる Who cleaned ...? です。" },
       { type: "choice", q: "「トムは昨日図書館へ行きました。」を否定文にした正しい文を選びなさい。", options: ["Tom didn't go to the library yesterday.", "Tom didn't went to the library yesterday.", "Tom doesn't go to the library yesterday.", "Tom wasn't go to the library yesterday."], answerIndex: 0, explanation: "【解説】didn't の後は動詞の原形 (go) です。" },
       { type: "choice", q: "「あなたは今朝朝食を食べましたか。」を表す正しい英文を選びなさい。", options: ["Did you eat breakfast this morning?", "Do you ate breakfast this morning?", "Were you eat breakfast this morning?", "Did you ate breakfast this morning?"], answerIndex: 0, explanation: "【解説】過去の疑問文 < Did + 主語 + 原形 ...? > です。" },
-      { type: "fill", q: "「あなたは先週末どこへ行きましたか。」 (1語)
-(  ) did you go last weekend?", answer: "Where", accepts: ["Where", "where"], explanation: "【解説】場所を聞く疑問詞 Where です。" },
-      { type: "fill", q: "「彼女はいつその本を買いましたか。」 (1語)
-(  ) did she buy the book?", answer: "When", accepts: ["When", "when"], explanation: "【解説】時を聞く疑問詞 When です。" },
+      { type: "fill", q: "「あなたは先週末どこへ行きましたか。」 (1語)\n(  ) did you go last weekend?", answer: "Where", accepts: ["Where", "where"], explanation: "【解説】場所を聞く疑問詞 Where です。" },
+      { type: "fill", q: "「彼女はいつその本を買いましたか。」 (1語)\n(  ) did she buy the book?", answer: "When", accepts: ["When", "when"], explanation: "【解説】時を聞く疑問詞 When です。" },
       { type: "choice", q: "「彼らは昨日何を取りましたか。」を表す正しい英文を選びなさい。", options: ["What did they take yesterday?", "What do they took yesterday?", "Where did they take yesterday?", "What were they take yesterday?"], answerIndex: 0, explanation: "【解説】< What + did + 主語 + 原形 ...? > です。" },
-      { type: "fill", q: "次の英文のカッコに入る適切な語を入力しなさい：
-What (  ) you do yesterday?", answer: "did", explanation: "【解説】過去の助動詞 did です。" },
-
-      // --- 【追加10問】L8過去形の否定文・疑問文（全文入力5問＋穴埋め/選択5問） ---
+      { type: "fill", q: "次の英文のカッコに入る適切な語を入力しなさい：\nWhat (  ) you do yesterday?", answer: "did", explanation: "【解説】過去の助動詞 did です。" },
       {
         type: "fill",
-        q: "【全文入力】次の文を過去形の否定文に書き換え、全文を入力しなさい：
-Ken played tennis yesterday.",
+        q: "【全文入力】次の文を過去形の否定文に書き換え、全文を入力しなさい：\nKen played tennis yesterday.",
         answer: "Ken did not play tennis yesterday.",
         accepts: [
           "Ken did not play tennis yesterday.", "Ken didn't play tennis yesterday.",
@@ -650,8 +626,7 @@ Ken played tennis yesterday.",
       },
       {
         type: "fill",
-        q: "【全文入力】次の文を過去形の疑問文に書き換え、全文を入力しなさい：
-They watched TV last night.",
+        q: "【全文入力】次の文を過去形の疑問文に書き換え、全文を入力しなさい：\nThey watched TV last night.",
         answer: "Did they watch TV last night?",
         accepts: ["Did they watch TV last night?", "Did they watch TV last night"],
         explanation: "【解説】過去形の疑問文は Did を前に出し、動詞を原形 (watch) に戻します。"
@@ -685,16 +660,14 @@ They watched TV last night.",
       },
       {
         type: "fill",
-        q: "「マイクは昨日、写真を撮りませんでした。」 (2語で空所補充)
-Mike (  )(  ) take pictures yesterday.",
+        q: "「マイクは昨日、写真を撮りませんでした。」 (2語で空所補充)\nMike (  )(  ) take pictures yesterday.",
         answer: "did not",
         accepts: ["did not", "didn't"],
         explanation: "【解説】did not または didn't を入れます。"
       },
       {
         type: "fill",
-        q: "「彼女は今朝早く起きましたか。」 (1語で空所補充)
-(  ) she get up early this morning?",
+        q: "「彼女は今朝早く起きましたか。」 (1語で空所補充)\n(  ) she get up early this morning?",
         answer: "Did",
         accepts: ["Did", "did"],
         explanation: "【解説】過去の疑問文なので文頭は Did です。"
@@ -725,8 +698,7 @@ Mike (  )(  ) take pictures yesterday.",
       },
       {
         type: "fill",
-        q: "「あなたは昨日の放課後、誰に会いましたか。」 (1語で空所補充)
-(  ) did you meet after school yesterday?",
+        q: "「あなたは昨日の放課後、誰に会いましたか。」 (1語で空所補充)\n(  ) did you meet after school yesterday?",
         answer: "Who",
         accepts: ["Who", "who", "Whom", "whom"],
         explanation: "【解説】「誰に」を尋ねる疑問詞 Who です。"
@@ -735,22 +707,19 @@ Mike (  )(  ) take pictures yesterday.",
     L8_read: [
       {
         type: "fill",
-        q: "空所に入る2語を入力しなさい（小文字で）：
-Denali National Park is (  )(  ) the 11 national parks in Alaska.",
+        q: "空所に入る2語を入力しなさい（小文字で）：\nDenali National Park is (  )(  ) the 11 national parks in Alaska.",
         answer: "one of",
         explanation: "【解説】one of + 複数名詞 で「〜の中の1つ」という意味です。"
       },
       {
         type: "fill",
-        q: "「彼らはバスに近づいて来ました。」 カッコ内の動詞の過去形を入力しなさい：
-They ( come ) close to our bus.",
+        q: "「彼らはバスに近づいて来ました。」 カッコ内の動詞の過去形を入力しなさい：\nThey ( come ) close to our bus.",
         answer: "came",
         explanation: "【解説】come の過去形は came です。"
       },
       {
         type: "fill",
-        q: "「僕は彼らの写真をたくさん撮りました。」 カッコ内の動詞の過去形を入力しなさい：
-I ( take ) many pictures of them.",
+        q: "「僕は彼らの写真をたくさん撮りました。」 カッコ内の動詞の過去形を入力しなさい：\nI ( take ) many pictures of them.",
         answer: "took",
         explanation: "【解説】take の過去形は took です。"
       },
@@ -768,8 +737,7 @@ I ( take ) many pictures of them.",
       },
       {
         type: "fill",
-        q: "「アラスカのデナリ国立公園」の「国立公園」を英語で入力しなさい：
-National (  )",
+        q: "「アラスカのデナリ国立公園」の「国立公園」を英語で入力しなさい：\nNational (  )",
         answer: "Park",
         accepts: ["Park", "park", "Parks", "parks"],
         explanation: "【解説】National Park で「国立公園」です。"
@@ -783,15 +751,13 @@ National (  )",
       },
       {
         type: "fill",
-        q: "「〜の写真を撮る」を表す熟語 (1語)：
-take pictures (  ) ...",
+        q: "「〜の写真を撮る」を表す熟語 (1語)：\ntake pictures (  ) ...",
         answer: "of",
         explanation: "【解説】take pictures of ... で「〜の写真を撮る」です。"
       },
       {
         type: "fill",
-        q: "「バスの近くに」を表す英語 (1語)：
-close (  ) our bus",
+        q: "「バスの近くに」を表す英語 (1語)：\nclose (  ) our bus",
         answer: "to",
         explanation: "【解説】close to ... で「〜の近くに/近接して」となります。"
       },
@@ -804,8 +770,7 @@ close (  ) our bus",
       },
       {
         type: "fill",
-        q: "「アラスカからの挨拶/便り」を表すタイトルの英語 (1語)：
-(  ) from Alaska",
+        q: "「アラスカからの挨拶/便り」を表すタイトルの英語 (1語)：\n(  ) from Alaska",
         answer: "Greetings",
         accepts: ["Greetings", "greetings", "Greeting", "greeting"],
         explanation: "【解説】Lesson 8 READ のタイトル「Greetings from Alaska」です。"
@@ -1001,7 +966,6 @@ close (  ) our bus",
 
     const expBox = document.getElementById('explanation');
     
-    // ピリオドやクエスチョンマーク、ダブルスペースを処理して判定を柔軟化
     const normalize = str => str.toLowerCase().replace(/[.?!]/g, '').replace(/\s+/g, ' ').trim();
     const userNorm = normalize(userVal);
 
