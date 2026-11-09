@@ -159,6 +159,37 @@
       font-weight: bold;
     }
 
+    .input-container {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .text-input {
+      width: 100%;
+      padding: 14px;
+      font-size: 1.1rem;
+      border: 2px solid #DFE3E8;
+      border-radius: var(--border-radius);
+      outline: none;
+    }
+
+    .text-input:focus {
+      border-color: var(--primary-color);
+    }
+
+    .submit-answer-btn {
+      padding: 12px;
+      background-color: var(--secondary-color);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
     .explanation-box {
       margin-top: 15px;
       padding: 16px;
@@ -270,6 +301,11 @@
 
     <div id="options-container" class="options-grid"></div>
 
+    <div id="input-container" class="input-container" style="display: none;">
+      <input type="text" id="user-text-input" class="text-input" placeholder="英単語を入力してください" autocomplete="off" autocorrect="off" autocapitalize="none">
+      <button id="submit-text-btn" class="submit-answer-btn" onclick="checkTextAnswer()">回答を送信</button>
+    </div>
+
     <div id="explanation" class="explanation-box"></div>
 
     <button id="next-btn" class="action-btn" onclick="nextQuestion()" disabled>次へ進む</button>
@@ -287,165 +323,195 @@
 </div>
 
 <script>
-  const questionBank = {
+  const rawQuestionBank = {
     L7_grammar: [
       {
-        q: "次の動詞の...ing形として正しいものを選びなさい：[ lie ]",
-        options: ["lying", "lieing", "lyingg", "lies"],
-        answer: 0,
+        type: "fill",
+        q: "次の動詞の...ing形を入力しなさい：[ lie ]",
+        answer: "lying",
         explanation: "【解説】語尾が ie で終わる動詞（lie, die など）を ...ing 形にする場合、ie を y に変えて ing をつけます。（lie ➔ lying）"
       },
       {
-        q: "「私は今、父の車を洗っています。」\nI (  ) washing my father’s car now.",
-        options: ["am", "is", "are", "do"],
-        answer: 0,
+        type: "fill",
+        q: "「私は今、父の車を洗っています。」 (1語)\nI (  ) washing my father’s car now.",
+        answer: "am",
         explanation: "【解説】「〜しています（現在進行形）」は < be動詞 + 動詞のing形 > で表します。主語が I なので be動詞は am です。"
       },
       {
-        q: "「カオリは今、自分の部屋で勉強しています。」\nKaori (  ) studying in her room now.",
-        options: ["are", "am", "is", "does"],
-        answer: 2,
-        explanation: "【解説】主語 Kaori は一人称・単数（She）なので、現在進行形の be動詞は is を使用します。"
+        type: "fill",
+        q: "「カオリは今、自分の部屋で勉強しています。」 (1語)\nKaori (  ) studying in her room now.",
+        answer: "is",
+        explanation: "【解説】主語 Kaori は三人称・単数（She）なので、現在進行形の be動詞は is を使用します。"
       },
       {
+        type: "fill",
         q: "カッコ内の語を適当な形にしなさい：\nSam is ( lie ) on the bed.",
-        options: ["lieing", "lying", "lyed", "lies"],
-        answer: 1,
+        answer: "lying",
         explanation: "【解説】is の後ろで「横になっている」という進行形を作るため、lie を ing 形（lying）にします。"
       },
       {
-        q: "「私は彼女のお母さんをよく知っています。」\nI (  ) her mother very well.",
-        options: ["know", "am knowing", "knows", "is knowing"],
-        answer: 0,
-        explanation: "【解説】know（知っている）、want（欲している）、like（好き）などの「状態」を表す動詞は、基本的に現在進行形（be + ing）にはせず、現在形（know）のまま使用します。"
+        type: "choice",
+        q: "「私は彼女のお母さんをよく知っています。」を表す正しい文を選びなさい。",
+        options: ["I know her mother very well.", "I am knowing her mother very well.", "I knows her mother very well.", "I is knowing her mother very well."],
+        answerIndex: 0,
+        explanation: "【解説】know（知っている）などの「状態」を表す動詞は、基本的に現在進行形（be + ing）にはせず、現在形（know）のまま使用します。"
       },
       {
-        q: "「メアリーは今、夕食を食べています。」\nMary (  ) dinner now.",
-        options: ["has", "is having", "have", "is have"],
-        answer: 1,
-        explanation: "【解説】have には「持っている（状態）」と「食べる（動作）」の意味があります。「食べる」の意味で使う場合は進行形にできるため、Mary is having dinner. となります。"
+        type: "fill",
+        q: "「メアリーは今、夕食を食べています。」 (2語で fills)\nMary (  ) dinner now.",
+        answer: "is having",
+        accepts: ["is having", "is eating"],
+        explanation: "【解説】「〜を食べている」は is having または is eating と表現します。"
       },
       {
+        type: "choice",
         q: "英文の誤りを直した正しい文を選びなさい：\n[ I’m eat an apple now. ]",
-        options: ["I’m eating an apple now.", "I eat an apple now.", "I’m eatting an apple now.", "I am eat an apple now."],
-        answer: 0,
-        explanation: "【解説】現在進行形は < be動詞 + ing形 > です。be動詞（I'm）の後ろの動詞は eating にしなければなりません。また eat の ing 形は t を重ねず eating となります。"
+        options: ["I eat an apple now.", "I’m eatting an apple now.", "I am eat an apple now.", "I’m eating an apple now."],
+        answerIndex: 3,
+        explanation: "【解説】現在進行形は < be動詞 + ing形 > です。eating となり、t を重ねずに ing をつけます。"
       },
       {
+        type: "choice",
         q: "英文の誤りを直した正しい文を選びなさい：\n[ We are wanting two dogs. ]",
-        options: ["We want two dogs.", "We are want two dogs.", "We wanting two dogs.", "We wants two dogs."],
-        answer: 0,
+        options: ["We are want two dogs.", "We want two dogs.", "We wanting two dogs.", "We wants two dogs."],
+        answerIndex: 1,
         explanation: "【解説】want（〜が欲しい）は状態を表す動詞のため進行形（are wanting）にできません。現在形の We want two dogs. が正解です。"
       }
     ],
     L7_read: [
       {
-        q: "空所(ア)に入る適当な語を選びなさい：\nDo you have any ideas ( ア ) the report?",
-        options: ["about", "between", "from", "around"],
-        answer: 0,
+        type: "fill",
+        q: "空所に入る適当な1語を入力しなさい：\nDo you have any ideas (  ) the report?",
+        answer: "about",
         explanation: "【解説】ideas about ... で「〜についてのアイディア・考え」という意味になります。"
       },
       {
-        q: "空所(イ)に入る適当な語を選びなさい：\nWhat is the difference ( イ ) hospital clowns and circus clowns?",
-        options: ["for", "between", "from", "around"],
-        answer: 1,
+        type: "fill",
+        q: "空所に入る適当な1語を入力しなさい：\nWhat is the difference (  ) hospital clowns and circus clowns?",
+        answer: "between",
         explanation: "【解説】difference between A and B で「AとBの違い」という重要表現です。"
       },
       {
-        q: "空所(ウ)に入る適当な語を選びなさい：\nThe children are away ( ウ ) their families, so they are sometimes lonely.",
-        options: ["from", "at", "between", "around"],
-        answer: 0,
+        type: "fill",
+        q: "空所に入る適当な1語を入力しなさい：\nThe children are away (  ) their families, so they are sometimes lonely.",
+        answer: "from",
         explanation: "【解説】away from ... で「〜から離れて」という意味になります。"
       },
       {
-        q: "空所(エ)に入る適当な語を選びなさい：\nNow, many hospital clowns visit hospitals ( エ ) the world.",
-        options: ["around", "between", "from", "by"],
-        answer: 0,
+        type: "fill",
+        q: "空所に入る適当な1語を入力しなさい：\nNow, many hospital clowns visit hospitals (  ) the world.",
+        answer: "around",
         explanation: "【解説】around the world で「世界中で / 世界中の」という意味になります。"
       },
       {
+        type: "choice",
         q: "「彼女はテレビを見ているところですか。」を表す正しい英文を選びなさい。",
-        options: ["Is she watching TV?", "Does she watch TV?", "Is she watch TV?", "Are she watching TV?"],
-        answer: 0,
+        options: ["Does she watch TV?", "Is she watch TV?", "Is she watching TV?", "Are she watching TV?"],
+        answerIndex: 2,
         explanation: "【解説】現在進行形の疑問文は < Be動詞 + 主語 + 動詞のing形 ...? > の順になります。主語が she なので Is she watching TV? となります。"
       }
     ],
     L8_grammar: [
       {
-        q: "次の動詞の過去形として正しいものを選びなさい：[ stop ]",
-        options: ["stoped", "stopped", "stoping", "stops"],
-        answer: 1,
-        explanation: "【解説】stop は「短母音 + 子音字」で終わる語のため、最後の P を重ねて ed をつけます（stopped）。"
+        type: "fill",
+        q: "次の動詞の過去形を入力しなさい：[ stop ]",
+        answer: "stopped",
+        explanation: "【解説】stop は「短母音 + 子音字」で終わる語のため、最後の p を重ねて ed をつけます（stopped）。"
       },
       {
-        q: "次の動詞の過去形として正しいものを選びなさい：[ write ]",
-        options: ["writed", "wrote", "written", "writing"],
-        answer: 1,
+        type: "fill",
+        q: "次の動詞の過去形を入力しなさい：[ write ]",
+        answer: "wrote",
         explanation: "【解説】write（書く）は不規則変化動詞です。過去形は wrote となります。"
       },
       {
-        q: "「私は昨晩、数学を勉強しました。」\nI (  ) math last night.",
-        options: ["study", "studies", "studied", "was studied"],
-        answer: 2,
-        explanation: "【解説】last night（昨晩）があるため過去形の文です。study は < 子音字 + y > で終わるため、y を i に変えて ed（studied）をつけます。"
+        type: "fill",
+        q: "「私は昨晩、数学を勉強しました。」 (1語)\nI (  ) math last night.",
+        answer: "studied",
+        explanation: "【解説】last night（昨晩）があるため過去形です。study は < 子音字 + y > で終わるため、y を i に変えて ed（studied）にします。"
       },
       {
-        q: "「ボブは２日前に自分の車を洗いました。」\nBob washed his car two days (  ).",
-        options: ["ago", "before", "last", "after"],
-        answer: 0,
-        explanation: "【解説】「（今から）〜前に」を表すときは < 期間 + ago > を使います。two days ago で「2日前」となります。"
+        type: "fill",
+        q: "「ボブは２日前に自分の車を洗いました。」 (1語)\nBob washed his car two days (  ).",
+        answer: "ago",
+        explanation: "【解説】「（今から）〜前に」を表すときは < 期間 + ago > を使います。"
       },
       {
-        q: "「私は昨夜、スマートフォンを使いませんでした。」\nI (  ) use my smartphone last night.",
-        options: ["don't", "didn't", "wasn't", "not"],
-        answer: 1,
+        type: "fill",
+        q: "「私は昨夜、スマートフォンを使いませんでした。」 (1語)\nI (  ) use my smartphone last night.",
+        answer: "didn't",
+        accepts: ["didn't", "did not"],
         explanation: "【解説】一般動詞の過去形の否定文は < didn't + 動詞の原形 > で表します。"
       },
       {
-        q: "「誰が居間を掃除しましたか。」—「マイクがしました。」\n(  ) cleaned the living room? — Mike did.",
-        options: ["What", "Who", "Where", "When"],
-        answer: 1,
-        explanation: "【解説】「誰が〜しましたか」と主語をたずねる疑問文は < Who + 過去形動詞 ...? > で表します。答えるときは Mike did. のように did を受けます。"
+        type: "fill",
+        q: "「誰が居間を掃除しましたか。」 (1語)\n(  ) cleaned the living room? — Mike did.",
+        answer: "Who",
+        accepts: ["Who", "who"],
+        explanation: "【解説】「誰が〜しましたか」と主語をたずねる疑問文は < Who + 過去形動詞 ...? > で表します。"
       },
       {
-        q: "「トムは昨日図書館へ行きました。」を否定文にしなさい。",
-        options: ["Tom didn't go to the library yesterday.", "Tom didn't went to the library yesterday.", "Tom doesn't go to the library yesterday.", "Tom wasn't go to the library yesterday."],
-        answer: 0,
+        type: "choice",
+        q: "「トムは昨日図書館へ行きました。」を否定文にした正しい文を選びなさい。",
+        options: ["Tom didn't went to the library yesterday.", "Tom doesn't go to the library yesterday.", "Tom wasn't go to the library yesterday.", "Tom didn't go to the library yesterday."],
+        answerIndex: 3,
         explanation: "【解説】didn't の後ろは必ず「動詞の原形（go）」に戻ります。went にしないよう注意しましょう。"
       }
     ],
     L8_read: [
       {
-        q: "空所(ア)(イ)に入る適当な語を選びなさい：\nDenali National Park is ( ア )( イ ) the 11 national parks in Alaska.",
-        options: ["one of", "some of", "first of", "part of"],
-        answer: 0,
-        explanation: "【解説】one of + 複数名詞 で「〜の中の1つ（1つ）」という意味になります。"
+        type: "fill",
+        q: "空所に入る2語を入力しなさい（小文字で）：\nDenali National Park is (  )(  ) the 11 national parks in Alaska.",
+        answer: "one of",
+        explanation: "【解説】one of + 複数名詞 で「〜の中の1つ」という意味になります。"
       },
       {
-        q: "「彼らはバスに近づいて来ました。」\nThey (  ) close to our bus.",
-        options: ["came", "come", "coming", "comes"],
-        answer: 0,
-        explanation: "【解説】come（来る）の過去形は came です。come close to ... で「〜に近づく」という意味になります。"
+        type: "fill",
+        q: "「彼らはバスに近づいて来ました。」 カッコ内の動詞の過去形を入力しなさい：\nThey ( come ) close to our bus.",
+        answer: "came",
+        explanation: "【解説】come（来る）の過去形は came です。"
       },
       {
-        q: "「僕は彼らの写真をたくさん撮りました。」\nI (  ) many pictures of them.",
-        options: ["take", "took", "taken", "taking"],
-        answer: 1,
-        explanation: "【解説】take（写真を撮る）の過去形は took です。take pictures of ... で「〜の写真を撮る」となります。"
+        type: "fill",
+        q: "「僕は彼らの写真をたくさん撮りました。」 カッコ内の動詞の過去形を入力しなさい：\nI ( take ) many pictures of them.",
+        answer: "took",
+        explanation: "【解説】take（写真を撮る）の過去形は took です。"
       },
       {
+        type: "choice",
         q: "「家族と僕は３日前にツアーバスでここに来ました。」を表す正しい英文を選びなさい。",
         options: [
-          "My family and I came here on the tour bus three days ago.",
           "My family and I come here on the tour bus three days ago.",
           "My family and I came here three days ago on the tour bus.",
+          "My family and I came here on the tour bus three days ago.",
           "My family and I was came here on the tour bus three days ago."
         ],
-        answer: 0,
+        answerIndex: 2,
         explanation: "【解説】「〜に乗って」は on the tour bus などの前置詞句で表し、「3日前」という時を表す three days ago は文末に置くのが一般的です。"
       }
     ]
   };
+
+  // 選択肢をランダムにシャッフルし、正解インデックスを自動追従させる関数
+  function buildQuestions(rawList) {
+    return rawList.map(item => {
+      if (item.type === 'choice') {
+        const originalOptions = [...item.options];
+        const correctAnswerText = originalOptions[item.answerIndex];
+        
+        // オプションをシャッフル
+        const shuffledOptions = [...originalOptions].sort(() => Math.random() - 0.5);
+        const newAnswerIndex = shuffledOptions.indexOf(correctAnswerText);
+        
+        return {
+          ...item,
+          options: shuffledOptions,
+          answerIndex: newAnswerIndex
+        };
+      }
+      return item;
+    });
+  }
 
   let currentCategory = '';
   let currentQuestions = [];
@@ -484,11 +550,12 @@
         alert('間違えた問題はありません！');
         return;
       }
-      currentQuestions = [...mistakes];
+      currentQuestions = buildQuestions([...mistakes]);
     } else {
-      currentQuestions = [...questionBank[category]];
+      currentQuestions = buildQuestions([...rawQuestionBank[category]]);
     }
 
+    // 問題順序もシャッフル
     currentQuestions.sort(() => Math.random() - 0.5);
 
     const categoryNames = {
@@ -514,15 +581,31 @@
     document.getElementById('question-text').innerText = q.q;
 
     const optionsContainer = document.getElementById('options-container');
+    const inputContainer = document.getElementById('input-container');
+    const textInput = document.getElementById('user-text-input');
+    
     optionsContainer.innerHTML = '';
+    textInput.value = '';
+    textInput.disabled = false;
 
-    q.options.forEach((opt, idx) => {
-      const btn = document.createElement('button');
-      btn.className = 'option-btn';
-      btn.innerText = `${idx + 1}. ${opt}`;
-      btn.onclick = () => checkAnswer(idx);
-      optionsContainer.appendChild(btn);
-    });
+    if (q.type === 'choice') {
+      optionsContainer.style.display = 'grid';
+      inputContainer.style.display = 'none';
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = `${idx + 1}. ${opt}`;
+        btn.onclick = () => checkChoiceAnswer(idx);
+        optionsContainer.appendChild(btn);
+      });
+    } else {
+      // 記述（空所補充）形式
+      optionsContainer.style.display = 'none';
+      inputContainer.style.display = 'flex';
+      document.getElementById('submit-text-btn').disabled = false;
+      setTimeout(() => textInput.focus(), 100);
+    }
 
     const expBox = document.getElementById('explanation');
     expBox.className = 'explanation-box';
@@ -531,7 +614,7 @@
     document.getElementById('next-btn').disabled = true;
   }
 
-  function checkAnswer(selectedIdx) {
+  function checkChoiceAnswer(selectedIdx) {
     const q = currentQuestions[currentIndex];
     const buttons = document.querySelectorAll('.option-btn');
     
@@ -539,7 +622,7 @@
 
     const expBox = document.getElementById('explanation');
 
-    if (selectedIdx === q.answer) {
+    if (selectedIdx === q.answerIndex) {
       buttons[selectedIdx].classList.add('correct');
       expBox.className = "explanation-box correct-style";
       expBox.innerHTML = `<div class="explanation-title">⭕ 正解！</div><div>${q.explanation}</div>`;
@@ -551,9 +634,9 @@
       }
     } else {
       buttons[selectedIdx].classList.add('wrong');
-      buttons[q.answer].classList.add('correct');
+      buttons[q.answerIndex].classList.add('correct');
       expBox.className = "explanation-box wrong-style";
-      expBox.innerHTML = `<div class="explanation-title">❌ 不正解... (正解: ${q.options[q.answer]})</div><div>${q.explanation}</div>`;
+      expBox.innerHTML = `<div class="explanation-title">❌ 不正解... (正解: ${q.options[q.answerIndex]})</div><div>${q.explanation}</div>`;
 
       if (!mistakes.some(m => m.q === q.q)) {
         mistakes.push(q);
@@ -564,6 +647,58 @@
     expBox.style.display = 'block';
     document.getElementById('next-btn').disabled = false;
   }
+
+  function checkTextAnswer() {
+    const q = currentQuestions[currentIndex];
+    const textInput = document.getElementById('user-text-input');
+    const userVal = textInput.value.trim().toLowerCase();
+    
+    if (!userVal) {
+      alert('英単語を入力してください');
+      return;
+    }
+
+    textInput.disabled = true;
+    document.getElementById('submit-text-btn').disabled = true;
+
+    const expBox = document.getElementById('explanation');
+    
+    let isCorrect = false;
+    if (q.accepts) {
+      isCorrect = q.accepts.map(a => a.toLowerCase()).includes(userVal);
+    } else {
+      isCorrect = (userVal === q.answer.toLowerCase());
+    }
+
+    if (isCorrect) {
+      expBox.className = "explanation-box correct-style";
+      expBox.innerHTML = `<div class="explanation-title">⭕ 正解！</div><div>${q.explanation}</div>`;
+      score++;
+
+      if (currentCategory === 'mistakes') {
+        mistakes = mistakes.filter(m => m.q !== q.q);
+        saveMistakes();
+      }
+    } else {
+      expBox.className = "explanation-box wrong-style";
+      expBox.innerHTML = `<div class="explanation-title">❌ 不正解... (正解: ${q.answer})</div><div>あなたの回答: ${textInput.value}</div><div style="margin-top:6px;">${q.explanation}</div>`;
+
+      if (!mistakes.some(m => m.q === q.q)) {
+        mistakes.push(q);
+        saveMistakes();
+      }
+    }
+
+    expBox.style.display = 'block';
+    document.getElementById('next-btn').disabled = false;
+  }
+
+  // Enterキーで送信
+  document.getElementById('user-text-input').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+      checkTextAnswer();
+    }
+  });
 
   function nextQuestion() {
     currentIndex++;
